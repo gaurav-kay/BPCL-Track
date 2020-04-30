@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">BPCL Track</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="start">START</string>
+    <string name="report">REPORT</string>
+    <string name="email_edit_text_hint">Enter email</string>
+    <string name="password_edit_text_hint">Enter password</string>
+    <string name="sign_in_button_hint">SIGN IN</string>
+</resources>

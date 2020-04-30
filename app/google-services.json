@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "238463380279",
+    "firebase_url": "https://bpcl-track.firebaseio.com",
+    "project_id": "bpcl-track",
+    "storage_bucket": "bpcl-track.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:238463380279:android:d0daf1a52d759d580588b2",
+        "android_client_info": {
+          "package_name": "com.example.bpcltrack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "238463380279-ksjncgamq4dai63flmbpu8b4b9l87r24.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bpcltrack",
+            "certificate_hash": "5aaf37c96e6e3b6e2aa04036667491815d6b85ce"
+          }
+        },
+        {
+          "client_id": "238463380279-0hf86tdtjf7esid67gl1ksm7heih5ikq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD71xLlZEd1UmqhyCz0dCFfVzxh4NaTK2Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "238463380279-0hf86tdtjf7esid67gl1ksm7heih5ikq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
