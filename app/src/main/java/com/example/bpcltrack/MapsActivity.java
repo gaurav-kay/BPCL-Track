@@ -5,13 +5,24 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,6 +36,7 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity {
@@ -33,7 +45,7 @@ public class MapsActivity extends FragmentActivity {
 
     private static final long FASTEST_UPDATE_INTERVAL = 5000L;
     private static final long UPDATE_INTERVAL = 10000L;
-    private static final int PENDING_INTENT_REQUEST_CODE = 101;
+    private boolean isTripStarted = false;
 
     private LocationRequest locationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -41,6 +53,8 @@ public class MapsActivity extends FragmentActivity {
 
     private ProgressBar progressBar;
     private Button startStopTrip, alertButton;
+
+    private ArrayList<Location> locations = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +83,7 @@ public class MapsActivity extends FragmentActivity {
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
-                        gotLocation();
+                        gotLocationPermissions();
                     }
 
                     @Override
@@ -78,26 +92,50 @@ public class MapsActivity extends FragmentActivity {
                     }
                 })
                 .check();
+
+        startStopTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isTripStarted) {
+                    Toast.makeText(MapsActivity.this, "Trip started", Toast.LENGTH_SHORT).show();
+
+                    fusedLocationProviderClient.requestLocationUpdates(
+                            locationRequest,
+                            locationCallback,
+                            MapsActivity.this.getMainLooper()
+                    );
+
+                    startStopTrip.setText(R.string.stop_button_text);
+                    alertButton.setVisibility(View.VISIBLE);
+                } else {
+                    Toast.makeText(MapsActivity.this, "Trip Stopped", Toast.LENGTH_SHORT).show();
+
+                    fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+
+                    startStopTrip.setText(R.string.start_button_text);
+                    alertButton.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
-    private void gotLocation() {
-        // set up location request
+    private void gotLocationPermissions() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
         locationRequest = new LocationRequest();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(UPDATE_INTERVAL);
         locationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL);
-        locationRequest.setSmallestDisplacement(50);
-
-        // set up pending intent
-        Intent intent = new Intent(this, LocationServiceBroadcastReceiver.class);
-        intent.setAction(LocationServiceBroadcastReceiver.ACTION_PROCESS_UPDATE);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, PENDING_INTENT_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // set up fused location provider
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, pendingIntent);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         progressBar.setVisibility(View.INVISIBLE);
-        alertButton.setVisibility(View.VISIBLE);
     }
+
+    private LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            super.onLocationResult(locationResult);
+
+            locations.add(locationResult.getLastLocation());
+        }
+    };
 }

@@ -11,7 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LocationServiceBroadcastReceiver extends BroadcastReceiver {
 
-    // TODO: send updated notifs to map activity using weak activity ref and control progress bar
+    // TODO: send updated notifs to map activity using weak activity ref and control progress bar -> lmao apparently not possible
 
     public static final String ACTION_PROCESS_UPDATE = "com.example.bpcltrack.UPDATE_LOCATION";
     private static final String TAG = "TAG";
