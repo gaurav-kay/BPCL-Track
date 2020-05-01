@@ -2,7 +2,7 @@
     <string name="app_name">BPCL Track</string>
     <string name="title_activity_maps">Map</string>
     <string name="start_button_text">START</string>
-    <string name="stop_button_text">STOP</string>
+    <string name="stop_button_text">FINISH</string>
     <string name="report">REPORT</string>
     <string name="email_edit_text_hint">Enter email</string>
     <string name="password_edit_text_hint">Enter password</string>
