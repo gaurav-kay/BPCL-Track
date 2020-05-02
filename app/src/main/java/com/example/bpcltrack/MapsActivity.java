@@ -1,26 +1,18 @@
 package com.example.bpcltrack;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -32,16 +24,23 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity {
 
@@ -49,44 +48,37 @@ public class MapsActivity extends FragmentActivity {
 
     private static final long FASTEST_UPDATE_INTERVAL = 5000L;
     private static final long UPDATE_INTERVAL = 10000L;
+    private static final float DEVIATION_THRESHOLD = 10f;
     private boolean isTripStarted = false;
 
     private LocationRequest locationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private GoogleMap mMap;
+    protected GoogleMap mMap;
     private PolylineOptions tripPolyLineOptions;
     private LatLngBounds.Builder cameraBounds;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth;
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
-    private ProgressBar progressBar;
+    protected ProgressBar progressBar;
     private Button startStopTrip, alertButton;
+    private SupportMapFragment mapFragment;
 
-    private ArrayList<Location> locations = new ArrayList<>();
+    private ArrayList<Location> locations;
+    protected ArrayList<LatLng> pipelineLatLngs = new ArrayList<>();
+    private HashMap<String, Object> tripDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        mAuth = FirebaseAuth.getInstance();
+
         progressBar = findViewById(R.id.progress_bar);
         startStopTrip = findViewById(R.id.start_stop_trip);
         alertButton = findViewById(R.id.alert_button);
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                mMap = googleMap;
-
-                mMap.setMyLocationEnabled(true);
-                mMap.getUiSettings().setMyLocationButtonEnabled(true);
-                tripPolyLineOptions = new PolylineOptions().clickable(true);
-                cameraBounds = new LatLngBounds.Builder();
-//                // Add a marker in Sydney and move the camera
-//                LatLng sydney = new LatLng(-34, 151);
-//                mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//                mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-            }
-        });
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
         Dexter.withContext(this)
                 .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -94,6 +86,19 @@ public class MapsActivity extends FragmentActivity {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
                         gotLocationPermissions();
+
+                        mapFragment.getMapAsync(new OnMapReadyCallback() {
+                            @Override
+                            public void onMapReady(GoogleMap googleMap) {
+                                mMap = googleMap;
+
+                                mMap.setMyLocationEnabled(true);
+                                mMap.getUiSettings().setMyLocationButtonEnabled(true);
+                                tripPolyLineOptions = new PolylineOptions().clickable(true);
+                                cameraBounds = new LatLngBounds.Builder();
+                                loadPipelines();
+                            }
+                        });
                     }
 
                     @Override
@@ -107,9 +112,11 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 if (!isTripStarted) {
-                    addCurrentLocationMarker("Start Location");
-
                     Toast.makeText(MapsActivity.this, "Trip started", Toast.LENGTH_SHORT).show();
+
+                    locations = new ArrayList<>();
+                    tripDetails = new HashMap<>();
+                    tripDetails.put("startTime", new Date().getTime());
 
                     fusedLocationProviderClient.requestLocationUpdates(
                             locationRequest,
@@ -120,34 +127,71 @@ public class MapsActivity extends FragmentActivity {
                     startStopTrip.setText(R.string.stop_button_text);
                     alertButton.setVisibility(View.VISIBLE);
                 } else {
-                    addCurrentLocationMarker("End Location");
-
                     Toast.makeText(MapsActivity.this, "Trip Completed, Uploading...", Toast.LENGTH_SHORT).show();
 
                     fusedLocationProviderClient.removeLocationUpdates(locationCallback);
 
+                    tripDetails.put("endTime", new Date().getTime());
+
                     startStopTrip.setText(R.string.start_button_text);
                     alertButton.setVisibility(View.VISIBLE);
+
+                    // end marker
+                    mMap.addMarker(new MarkerOptions().position(latLngFromLocation(locations.get(locations.size() - 1))).title("End Location"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(cameraBounds.build(), 150));
 
                     uploadTrip();
                 }
                 isTripStarted = !isTripStarted;
             }
         });
+
+        alertButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeReport();
+            }
+        });
+    }
+
+    private void loadPipelines() {
+        LoadKml loadKml = new LoadKml(this);
+        loadKml.execute();
+    }
+
+    private void makeReport() {
+//        db.collection("reports")
+//                .document()
     }
 
     private void uploadTrip() {
-        
+        tripDetails.put("locations", locations);
+
+        db.collection("rmpWorkers")
+                .document(mAuth.getCurrentUser().getUid())
+                .collection("trips")
+                .document(simpleDateFormat.format(new Date()))
+
+                .set(tripDetails)
+
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        resetMap();
+
+                        Toast.makeText(MapsActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "onFailure: " + e);
+                    }
+                });
     }
 
-    private void addCurrentLocationMarker(String title) {
-        @SuppressLint("MissingPermission") Location location = ((LocationManager) getSystemService(LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title(title));
-        if (locations.size() == 0) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 16F));
-        } else {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(cameraBounds.build(), 50));
-        }
+    private void resetMap() {
+        mMap.clear();
     }
 
     private void gotLocationPermissions() {
@@ -166,23 +210,67 @@ public class MapsActivity extends FragmentActivity {
         public void onLocationResult(LocationResult locationResult) {
             super.onLocationResult(locationResult);
 
+            if (tripDeviated(locationResult.getLastLocation())) {
+                // todo: notification
+                Toast.makeText(MapsActivity.this, "Going off course", Toast.LENGTH_SHORT).show();
+
+                makeDeviationReport(locationResult.getLastLocation());
+            }
+
             locations.add(locationResult.getLastLocation());
             updateMap(locationResult.getLastLocation());
         }
     };
 
-    private void updateMap(Location location) {
-        if (locations.size() != 1) {
-            mMap.addPolyline(tripPolyLineOptions.add(
-                    latLngFromLocation(locations.get(locations.size() - 1)),
-                    latLngFromLocation(location)
-            ));
+    private void makeDeviationReport(Location lastLocation) {
+        HashMap<String, Object> map = new HashMap<>();
 
-            cameraBounds.include(latLngFromLocation(location));
+        map.put("locations", locations);
+        map.put("lastLocation", lastLocation);
+        map.put("reportTime", new Date().getTime());
+        map.put("uid", mAuth.getCurrentUser().getUid());
+        map.put("pipelineLatLngs", pipelineLatLngs);
+
+        db.collection("reports")
+                .document(mAuth.getCurrentUser().getUid() + " " + simpleDateFormat.format(new Date()))
+
+                .set(map)
+
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "onFailure: ", e);
+                    }
+                });
+    }
+
+    private boolean tripDeviated(Location lastLocation) {
+        for (LatLng pipelineLatLng : pipelineLatLngs) {
+            float[] results = new float[1];
+            Location.distanceBetween(pipelineLatLng.latitude, lastLocation.getLatitude(), pipelineLatLng.longitude, lastLocation.getLongitude(), results);
+            if (results[0] >= DEVIATION_THRESHOLD) {
+                return true;
+            }
         }
+        return false;
+    }
+
+    private void updateMap(Location location) {
+        if (locations.size() == 1) {
+            // start marker
+            mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Start Location"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 16F));
+        }
+        mMap.addPolyline(tripPolyLineOptions.add(
+                latLngFromLocation(locations.get(locations.size() - 1)),
+                latLngFromLocation(location)
+        ));
+        cameraBounds.include(latLngFromLocation(location));
     }
 
     private LatLng latLngFromLocation(Location location) {
         return new LatLng(location.getLatitude(), location.getLongitude());
     }
 }
+
+// todo: change distance for location req

@@ -34,8 +34,6 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"></activity>
 
-        <receiver android:name=".LocationServiceBroadcastReceiver" />
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

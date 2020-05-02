@@ -12,3 +12,6 @@
 /captures
 .externalNativeBuild
 .cxx
+
+app/src/main/res/raw/pipelines.kml
+app/src/main/res/raw/pipelines_csv.csv

@@ -36,4 +36,7 @@ dependencies {
 
     // location
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+
+    // maps utility
+    implementation 'com.google.maps.android:android-maps-utils:1.0.2'
 }
