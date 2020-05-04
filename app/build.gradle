@@ -35,6 +35,9 @@ dependencies {
     // dexter for permissions
     implementation 'com.karumi:dexter:6.1.0'
 
+    // glide for images
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+
     // location
     implementation 'com.google.android.gms:play-services-location:17.0.0'
 

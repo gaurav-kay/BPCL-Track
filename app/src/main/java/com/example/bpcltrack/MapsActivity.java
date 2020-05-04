@@ -92,6 +92,8 @@ public class MapsActivity extends FragmentActivity {
         alertButton = findViewById(R.id.alert_button);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
+        progressBar.setVisibility(View.VISIBLE);
+
         Dexter.withContext(this)
                 .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new MultiplePermissionsListener() {

@@ -28,13 +28,13 @@ public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
         this.mapsActivityWeakReference = new WeakReference<>(activity);
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-
-        MapsActivity activity = mapsActivityWeakReference.get();
-        activity.progressBar.setVisibility(View.VISIBLE);
-    }
+//    @Override
+//    protected void onPreExecute() {
+//        super.onPreExecute();
+//
+//        MapsActivity activity = mapsActivityWeakReference.get();
+//        activity.progressBar.setVisibility(View.VISIBLE);
+//    }
 
     @Override
     protected PolylineOptions doInBackground(Void... voids) {
@@ -72,7 +72,7 @@ public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
 
         activity.pipelineLatLngs = (ArrayList<LatLng>) polylineOptions.getPoints();
         activity.mMap.addPolyline(polylineOptions);
-        activity.progressBar.setVisibility(View.INVISIBLE);
         activity.mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(this.cameraBounds.build(), 150));
+        activity.progressBar.setVisibility(View.INVISIBLE);
     }
 }

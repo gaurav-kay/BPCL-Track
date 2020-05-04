@@ -10,7 +10,7 @@
     <string name="report_incident">Report Incident</string>
     <string name="priority_static">Priority</string>
     <string name="report_type_static">Report Type</string>
-    <string name="description_static">Description</string>
+    <string name="description_static">Enter Description…</string>
     <string name="enter_description_of_incident">Enter Description of Incident…</string>
     <string name="attach_picture">Attach Picture</string>
     <string name="getting_location">Getting Location…</string>

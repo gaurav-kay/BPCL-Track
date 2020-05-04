@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.core.widget.NestedScrollView
     android:id="@+id/scroll_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -73,12 +73,10 @@
                 android:text="@string/attach_picture"
                 android:textColor="#000" />
 
-            <LinearLayout
-                android:id="@+id/linear_layout"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/images_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical" />
+                android:layout_height="wrap_content" />
 
             <View
                 android:layout_width="match_parent"
@@ -105,4 +103,4 @@
         </LinearLayout>
 <!--    </RelativeLayout>-->
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
