@@ -66,6 +66,7 @@ public class ReportActivity extends AppCompatActivity {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
     private ArrayList<Uri> photoFileUris;
+    private ArrayList<File> photoFiles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +74,10 @@ public class ReportActivity extends AppCompatActivity {
         setContentView(R.layout.activity_report);
 
         Bundle bundle = getIntent().getExtras();
-        Log.d(TAG, "onCreate: " + bundle);
         final ArrayList<Location> locations = (ArrayList<Location>) bundle.get("locations");
 
         photoFileUris = new ArrayList<>();
+        photoFiles = new ArrayList<>();
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
         spinner = findViewById(R.id.report_type_spinner);
@@ -122,6 +123,7 @@ public class ReportActivity extends AppCompatActivity {
             Uri photoURI = FileProvider.getUriForFile(this, authorities, photoFile);
 
             photoFileUris.add(photoURI);
+            photoFiles.add(photoFile);
 
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -172,7 +174,7 @@ public class ReportActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Uri uri) {
                     HashMap<String, Object> map = new HashMap<>();
-                    map.put("imageUrl", uri);
+                    map.put("imageUrl", uri.toString());
                     map.put(
                             "description",
                             ((EditText) linearLayout.getChildAt(photoFileUris.indexOf(photoFileUri))
@@ -217,7 +219,7 @@ public class ReportActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            Bitmap bitmap = BitmapFactory.decodeFile(photoFileUris.get(photoFileUris.size() - 1).getPath());
+            Bitmap bitmap = BitmapFactory.decodeFile(photoFiles.get(photoFiles.size() - 1).getPath());
 
 //            ImageView imageView = new ImageView(ReportActivity.this);
 //

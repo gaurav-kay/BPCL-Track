@@ -59,6 +59,7 @@ public class MapsActivity extends FragmentActivity {
 
     private boolean isTripStarted = false;
     private boolean isReportRecentlyMade = false;
+    private boolean isFirstLocationRecieved = false;
 
     private LocationRequest locationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -137,7 +138,9 @@ public class MapsActivity extends FragmentActivity {
                     );
 
                     startStopTrip.setText(R.string.stop_button_text);
+                    alertButton.setEnabled(false);
                     alertButton.setVisibility(View.VISIBLE);
+                    alertButton.setText(R.string.getting_location);
                 } else {
                     Toast.makeText(MapsActivity.this, "Trip Completed, Uploading...", Toast.LENGTH_SHORT).show();
 
@@ -226,6 +229,13 @@ public class MapsActivity extends FragmentActivity {
         public void onLocationResult(LocationResult locationResult) {
             super.onLocationResult(locationResult);
 
+            if (!isFirstLocationRecieved) {
+                isFirstLocationRecieved = true;
+
+                alertButton.setVisibility(View.VISIBLE);
+                alertButton.setEnabled(true);
+                alertButton.setText(R.string.report);
+            }
             if (isTripDeviated(locationResult.getLastLocation()) && !isReportRecentlyMade) {
                 // todo: notification
                 Toast.makeText(MapsActivity.this, "Going off course", Toast.LENGTH_SHORT).show();
@@ -246,7 +256,7 @@ public class MapsActivity extends FragmentActivity {
         map.put("reportTime", new Date().getTime());
         map.put("uid", mAuth.getCurrentUser().getUid());
 
-        db.collection("reports")
+        db.collection("deviationReports")
                 .document(mAuth.getCurrentUser().getUid() + " " + simpleDateFormat.format(new Date()))
 
                 .set(map)
