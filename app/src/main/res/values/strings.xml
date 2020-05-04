@@ -7,4 +7,10 @@
     <string name="email_edit_text_hint">Enter email</string>
     <string name="password_edit_text_hint">Enter password</string>
     <string name="sign_in_button_hint">SIGN IN</string>
+    <string name="report_incident">Report Incident</string>
+    <string name="priority_static">Priority</string>
+    <string name="report_type_static">Report Type</string>
+    <string name="description_static">Description</string>
+    <string name="enter_description_of_incident">Enter Description of Incident…</string>
+    <string name="attach_picture">Attach Picture</string>
 </resources>

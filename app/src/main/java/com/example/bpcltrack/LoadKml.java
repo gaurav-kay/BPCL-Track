@@ -5,7 +5,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.BufferedReader;
@@ -20,6 +22,7 @@ public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
     private static final String TAG = "TAG";
 
     private WeakReference<MapsActivity> mapsActivityWeakReference;
+    private LatLngBounds.Builder cameraBounds = new LatLngBounds.Builder();
 
     public LoadKml(MapsActivity activity) {
         this.mapsActivityWeakReference = new WeakReference<>(activity);
@@ -51,6 +54,7 @@ public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
                 }
                 String[] row = line.split(",");
 
+                cameraBounds.include(new LatLng(Double.parseDouble(row[1]), Double.parseDouble(row[0])));
                 polylineOptions.add(new LatLng(Double.parseDouble(row[1]), Double.parseDouble(row[0])));
             }
         } catch (IOException e) {
@@ -69,5 +73,6 @@ public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
         activity.pipelineLatLngs = (ArrayList<LatLng>) polylineOptions.getPoints();
         activity.mMap.addPolyline(polylineOptions);
         activity.progressBar.setVisibility(View.INVISIBLE);
+        activity.mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(this.cameraBounds.build(), 150));
     }
 }
