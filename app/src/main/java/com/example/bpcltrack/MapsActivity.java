@@ -33,15 +33,14 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.AbstractSequentialList;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,6 +59,7 @@ public class MapsActivity extends FragmentActivity {
     private boolean isTripStarted = false;
     private boolean isReportRecentlyMade = false;
     private boolean isFirstLocationRecieved = false;
+    private boolean firstDBUpdate = true;
 
     private LocationRequest locationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -93,6 +93,16 @@ public class MapsActivity extends FragmentActivity {
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
         progressBar.setVisibility(View.VISIBLE);
+
+        /*
+          Hey
+          So update:
+           - The app can track the route of the worker and once they worker clicks finish, the trip is uploaded to db, where the officer can view it.
+           - If the worker deviates from the route, it will be logged.
+           - If the worker finds any event along the route, they can make a report with pictures etc and this will be uploaded to db.
+          Few questions:
+           - As of now I've planned that on the officer side app, the officers can view reports made and can also view the deviation reports
+         */
 
         Dexter.withContext(this)
                 .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -168,9 +178,6 @@ public class MapsActivity extends FragmentActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MapsActivity.this, ReportActivity.class);
                 intent.putExtra("locations", locations);
-//                Bundle bundle = new Bundle();
-//                bundle.putSerializable("locations", locations);
-//                intent.
                 startActivity(intent);
             }
         });
@@ -182,7 +189,7 @@ public class MapsActivity extends FragmentActivity {
     }
 
     private void uploadTrip() {
-        tripDetails.put("locations", locations);
+//        tripDetails.put("locations", locations);
 
         db.collection("rmpWorkers")
                 .document(mAuth.getCurrentUser().getUid())
@@ -231,6 +238,9 @@ public class MapsActivity extends FragmentActivity {
         public void onLocationResult(LocationResult locationResult) {
             super.onLocationResult(locationResult);
 
+            locations.add(locationResult.getLastLocation());
+            updateMap(locationResult.getLastLocation());
+
             if (!isFirstLocationRecieved) {
                 isFirstLocationRecieved = true;
 
@@ -245,10 +255,32 @@ public class MapsActivity extends FragmentActivity {
                 makeDeviationReport(locationResult.getLastLocation());
             }
 
-            locations.add(locationResult.getLastLocation());
-            updateMap(locationResult.getLastLocation());
+            updateDB(locations);
         }
     };
+
+    private void updateDB(ArrayList<Location> currentLocations) {
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("locations", currentLocations);
+        if (firstDBUpdate) {
+            updateMap.put("startTime", tripDetails.get("startTime"));
+            firstDBUpdate = false;
+        }
+
+        db.collection("rmpWorkers")
+                .document(mAuth.getCurrentUser().getUid())
+                .collection("trips")
+                .document(simpleDateFormat.format(new Date((long) tripDetails.get("startTime"))))
+
+                .set(updateMap, SetOptions.merge())
+
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "onFailure: ", e);
+                    }
+                });
+    }
 
     private void makeDeviationReport(Location lastLocation) {
         HashMap<String, Object> map = new HashMap<>();

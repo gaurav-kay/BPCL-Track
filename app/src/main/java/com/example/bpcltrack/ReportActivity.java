@@ -15,8 +15,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +26,6 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -44,7 +41,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.io.ObjectInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -246,20 +242,6 @@ public class ReportActivity extends AppCompatActivity {
 
             imagesAdapter = new ImagesAdapter(photoBitmaps);
             imagesRecyclerView.setAdapter(imagesAdapter);
-
-//            ImageView imageView = new ImageView(ReportActivity.this);
-//
-//            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//            imageView.setImageBitmap(bitmap);
-//            imageView.setLayoutParams(layoutParams);
-
-            // todo: fix this shit
-
-//            View imageView = View.inflate(this, R.layout.item_layout_image, null);
-//
-//            ((ImageView) imageView.findViewById(R.id.picture_image_view)).setImageBitmap(bitmap);
-//
-//            linearLayout.addView(imageView);
         }
     }
 
