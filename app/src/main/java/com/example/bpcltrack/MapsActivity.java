@@ -90,19 +90,9 @@ public class MapsActivity extends FragmentActivity {
         progressBar = findViewById(R.id.progress_bar);
         startStopTrip = findViewById(R.id.start_stop_trip);
         alertButton = findViewById(R.id.alert_button);
-        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
 
         progressBar.setVisibility(View.VISIBLE);
-
-        /*
-          Hey
-          So update:
-           - The app can track the route of the worker and once they worker clicks finish, the trip is uploaded to db, where the officer can view it.
-           - If the worker deviates from the route, it will be logged.
-           - If the worker finds any event along the route, they can make a report with pictures etc and this will be uploaded to db.
-          Few questions:
-           - As of now I've planned that on the officer side app, the officers can view reports made and can also view the deviation reports
-         */
 
         Dexter.withContext(this)
                 .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION)

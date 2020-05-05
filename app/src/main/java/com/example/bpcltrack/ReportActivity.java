@@ -156,6 +156,7 @@ public class ReportActivity extends AppCompatActivity {
         report.put("description", descriptionEditText.getText().toString());
         report.put("locations", locations);
         report.put("reportLocation", locations.get(locations.size() - 1));
+        report.put("reportType", REPORT_TYPES[spinner.getSelectedItemPosition()]);
 
         if (imagesAdapter == null) {
             updateDBWithReport(report);

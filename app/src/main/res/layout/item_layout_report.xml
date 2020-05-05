@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="5dp"
+    android:layout_margin="5dp"
+    xmlns:map="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_margin="5dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:baselineAligned="false">
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/report_report_location"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            map:cameraZoom="13"
+            map:liteMode="true" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/report_report_type_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/StaticTextViewTheme" />
+
+            <TextView
+                android:id="@+id/report_report_priority_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/StaticTextViewTheme" />
+
+            <TextView
+                android:id="@+id/report_description_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/StaticTextViewTheme" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
