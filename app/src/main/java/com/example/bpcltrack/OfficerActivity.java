@@ -1,7 +1,6 @@
 package com.example.bpcltrack;
 
 import android.os.Bundle;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,13 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class OfficerActivity extends AppCompatActivity {
 
@@ -25,8 +19,8 @@ public class OfficerActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private TabLayout tabLayout;
 
-    private final Fragment[] FRAGMENTS = new Fragment[]{new ReportsFragment(), new CurrentLocationsFragment(), new DeviationReportsFragment()};
-    private final String[] TITLES = new String[]{"Reports", "Current Locations", "Deviation Reports"};
+    private final Fragment[] FRAGMENTS = new Fragment[]{new ReportsFragment(), new CurrentLocationsFragment(), new AllTripsFragment()};
+    private final String[] TITLES = new String[]{"Reports", "Current Locations", "All Trips"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
