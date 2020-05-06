@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                                 public void onSuccess(AuthResult authResult) {
                                     findViewById(R.id.progress_bar).setVisibility(View.GONE);
 
-                                    if (!isRMPWorker(authResult.getUser())) {
+                                    if (isRMPWorker(authResult.getUser())) {
                                         startActivity(new Intent(MainActivity.this, MapsActivity.class));
                                     } else {
                                         startActivity(new Intent(MainActivity.this, OfficerActivity.class));
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            if (!isRMPWorker(currentUser)) {
+            if (isRMPWorker(currentUser)) {
                 startActivity(new Intent(MainActivity.this, MapsActivity.class));
             } else {
                 startActivity(new Intent(MainActivity.this, OfficerActivity.class));

@@ -132,6 +132,7 @@ public class MapsActivity extends FragmentActivity {
                     locations = new ArrayList<>();
                     tripDetails = new HashMap<>();
                     tripDetails.put("startTime", new Date().getTime());
+//                    tripDetails.put("isOngoing", true);
 
                     fusedLocationProviderClient.requestLocationUpdates(
                             locationRequest,
@@ -139,7 +140,6 @@ public class MapsActivity extends FragmentActivity {
                             MapsActivity.this.getMainLooper()
                     );
 
-                    startStopTrip.setText(R.string.stop_button_text);
                     alertButton.setEnabled(false);
                     alertButton.setVisibility(View.VISIBLE);
                     alertButton.setText(R.string.getting_location);
@@ -149,6 +149,7 @@ public class MapsActivity extends FragmentActivity {
                     fusedLocationProviderClient.removeLocationUpdates(locationCallback);
 
                     tripDetails.put("endTime", new Date().getTime());
+                    tripDetails.put("isOngoing", false);  // todo: some error might be here
 
                     startStopTrip.setText(R.string.start_button_text);
                     alertButton.setVisibility(View.INVISIBLE);
@@ -158,8 +159,8 @@ public class MapsActivity extends FragmentActivity {
                     mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(cameraBounds.build(), 150));
 
                     uploadTrip();
+                    isTripStarted = false;
                 }
-                isTripStarted = !isTripStarted;
             }
         });
 
@@ -184,9 +185,9 @@ public class MapsActivity extends FragmentActivity {
         db.collection("rmpWorkers")
                 .document(mAuth.getCurrentUser().getUid())
                 .collection("trips")
-                .document(simpleDateFormat.format(new Date()))
+                .document(simpleDateFormat.format(new Date((long) tripDetails.get("startTime"))))
 
-                .set(tripDetails)
+                .set(tripDetails, SetOptions.merge())
 
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -254,7 +255,11 @@ public class MapsActivity extends FragmentActivity {
         updateMap.put("locations", currentLocations);
         if (firstDBUpdate) {
             updateMap.put("startTime", tripDetails.get("startTime"));
+            updateMap.put("isOngoing", true);
+            updateMap.put("by", mAuth.getCurrentUser().getEmail());
             firstDBUpdate = false;
+            isTripStarted = true;
+            startStopTrip.setText(R.string.stop_button_text);
         }
 
         db.collection("rmpWorkers")
@@ -340,3 +345,4 @@ public class MapsActivity extends FragmentActivity {
 }
 
 // todo: change distance for location req
+// todo: add fab to view reports
