@@ -28,6 +28,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -89,14 +90,15 @@ public class ReportViewActivity extends AppCompatActivity {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mMap = googleMap;
-                mMap.setMyLocationEnabled(true);
-                mMap.getUiSettings().setMyLocationButtonEnabled(true);
+//                mMap.setMyLocationEnabled(true);  // requires permission on officer side
+//                mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
                 double latitude = Double.parseDouble(String.valueOf(((HashMap) report.get("reportLocation")).get("latitude")));
                 double longitude = Double.parseDouble(String.valueOf(((HashMap) report.get("reportLocation")).get("longitude")));
                 String reportType = String.valueOf(report.get("reportType"));
                 mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(reportType));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 13F));
+                mMap.getUiSettings().setMapToolbarEnabled(false);
                 loadPipelines();
             }
         });

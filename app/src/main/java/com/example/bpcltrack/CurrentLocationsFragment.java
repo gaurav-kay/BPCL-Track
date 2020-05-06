@@ -147,6 +147,8 @@ public class CurrentLocationsFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final CurrentTripViewHolder holder, final int position) {
+            Log.d(TAG, "onBindViewHolder: " + trips.get(position));
+
             if (trips.get(position).containsKey("by")) {  // db inconsistencies todo: fix
                 String setText = String.valueOf(trips.get(position).get("by"));
                 holder.userTextView.setText(setText);
