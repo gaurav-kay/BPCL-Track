@@ -174,7 +174,7 @@ public class MapsActivity extends FragmentActivity {
     }
 
     private void loadPipelines() {
-        LoadKml loadKml = new LoadKml(this);
+        LoadKml loadKml = new LoadKml(this, true);
         loadKml.execute();
     }
 

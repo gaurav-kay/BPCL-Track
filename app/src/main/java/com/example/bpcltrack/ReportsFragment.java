@@ -2,15 +2,16 @@ package com.example.bpcltrack;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +29,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -40,6 +42,7 @@ public class ReportsFragment extends Fragment {
     private ReportsAdapter reportsAdapter = null;
 
     private RecyclerView recyclerView;
+    private ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -48,19 +51,11 @@ public class ReportsFragment extends Fragment {
 
         MapsInitializer.initialize(view.getContext());
 
+        progressBar = view.findViewById(R.id.report_progress_bar);
         recyclerView = view.findViewById(R.id.reports_recycler_view);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(null);
-        recyclerView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = recyclerView.getChildLayoutPosition(v);
-
-                Intent intent = new Intent(getActivity(), ReportViewActivity.class);
-                intent.putExtra("report", (Parcelable) reportsAdapter);
-
-                startActivity();            }
-        });
 
         db.collection("reports")
                 .get()
@@ -81,6 +76,7 @@ public class ReportsFragment extends Fragment {
                         reportsAdapter.notifyDataSetChanged();
 
                         recyclerView.setAdapter(reportsAdapter);
+                        progressBar.setVisibility(View.GONE);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -110,7 +106,8 @@ public class ReportsFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ReportViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ReportViewHolder holder, final int position) {
+            holder.reportByTextView.setText(String.valueOf(reportSnapshots.get(position).getData().get("by")));
             holder.reportTypeTextView.setText(String.valueOf(reportSnapshots.get(position).getData().get("reportType")));
             holder.reportPriorityTextView.setText(String.valueOf(reportSnapshots.get(position).getData().get("priority")));
             holder.reportDescriptionTextView.setText(String.valueOf(reportSnapshots.get(position).getData().get("description")));
@@ -128,6 +125,15 @@ public class ReportsFragment extends Fragment {
                     googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
                 }
             });
+
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), ReportViewActivity.class);
+                    intent.putExtra("report", (Serializable) reportSnapshots.get(position).getData());
+                    startActivity(intent);
+                }
+            });
         }
 
         @Override
@@ -137,13 +143,16 @@ public class ReportsFragment extends Fragment {
 
         private class ReportViewHolder extends RecyclerView.ViewHolder {
 
+            private CardView cardView;
             private MapView mapView;
-            private TextView reportTypeTextView, reportPriorityTextView, reportDescriptionTextView;
+            private TextView reportByTextView, reportTypeTextView, reportPriorityTextView, reportDescriptionTextView;
 
             public ReportViewHolder(@NonNull View itemView) {
                 super(itemView);
 
+                cardView = itemView.findViewById(R.id.item_card_view);
                 mapView = itemView.findViewById(R.id.report_report_location);
+                reportByTextView = itemView.findViewById(R.id.report_report_by_text_view);
                 reportTypeTextView = itemView.findViewById(R.id.report_report_type_text_view);
                 reportPriorityTextView = itemView.findViewById(R.id.report_report_priority_text_view);
                 reportDescriptionTextView = itemView.findViewById(R.id.report_description_text_view);

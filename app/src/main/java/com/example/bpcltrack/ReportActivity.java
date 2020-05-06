@@ -157,6 +157,8 @@ public class ReportActivity extends AppCompatActivity {
         report.put("locations", locations);
         report.put("reportLocation", locations.get(locations.size() - 1));
         report.put("reportType", REPORT_TYPES[spinner.getSelectedItemPosition()]);
+        report.put("by", auth.getCurrentUser().getEmail());
+        report.put("acknowledged", false);
 
         if (imagesAdapter == null) {
             updateDBWithReport(report);

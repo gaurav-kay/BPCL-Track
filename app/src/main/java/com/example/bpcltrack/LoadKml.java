@@ -1,9 +1,12 @@
 package com.example.bpcltrack;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -17,32 +20,38 @@ import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
     private static final String TAG = "TAG";
 
-    private WeakReference<MapsActivity> mapsActivityWeakReference;
+    private WeakReference<Context> weakReference;
+    private boolean isMapsActivity;
     private LatLngBounds.Builder cameraBounds = new LatLngBounds.Builder();
 
-    public LoadKml(MapsActivity activity) {
-        this.mapsActivityWeakReference = new WeakReference<>(activity);
+    public LoadKml(Context context, boolean isMapsActivity) {
+//        if (reportViewActivity == null) {
+//            this.mapsActivityWeakReference = new WeakReference<>(mapsActivity);
+//        } else {
+//            this.reportViewActivityWeakReference = new WeakReference<>(reportViewActivity);
+//        }
+        this.weakReference = new WeakReference<>(context);
+        this.isMapsActivity = isMapsActivity;
     }
-
-//    @Override
-//    protected void onPreExecute() {
-//        super.onPreExecute();
-//
-//        MapsActivity activity = mapsActivityWeakReference.get();
-//        activity.progressBar.setVisibility(View.VISIBLE);
-//    }
 
     @Override
     protected PolylineOptions doInBackground(Void... voids) {
-        MapsActivity activity = mapsActivityWeakReference.get();
-
         PolylineOptions polylineOptions = new PolylineOptions().color(Color.RED);
 
-        InputStream inputStream = activity.getResources().openRawResource(R.raw.pipelines_csv);
+        InputStream inputStream = weakReference.get().getResources().openRawResource(R.raw.pipelines_csv);
+//        if (reportViewActivityWeakReference == null) {
+//            MapsActivity activity = (MapsActivity) mapsActivityWeakReference.get();
+//            inputStream = activity.getResources().openRawResource(R.raw.pipelines_csv);
+//        } else {
+//            ReportViewActivity activity = (ReportViewActivity) reportViewActivityWeakReference.get();
+//            inputStream = activity.getResources().openRawResource(R.raw.pipelines_csv);
+//        }
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
         String line;
         boolean firstLine = true;
@@ -68,11 +77,19 @@ public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
     protected void onPostExecute(PolylineOptions polylineOptions) {
         super.onPostExecute(polylineOptions);
 
-        MapsActivity activity = mapsActivityWeakReference.get();
+        if (isMapsActivity) {
+            Context context = weakReference.get();
 
-        activity.pipelineLatLngs = (ArrayList<LatLng>) polylineOptions.getPoints();
-        activity.mMap.addPolyline(polylineOptions);
-        activity.mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(this.cameraBounds.build(), 150));
-        activity.progressBar.setVisibility(View.INVISIBLE);
+            ((MapsActivity) context).pipelineLatLngs = (ArrayList<LatLng>) polylineOptions.getPoints();
+            ((MapsActivity) context).mMap.addPolyline(polylineOptions);
+            ((MapsActivity) context).mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(this.cameraBounds.build(), 150));
+            ((MapsActivity) context).progressBar.setVisibility(View.INVISIBLE);
+        } else {
+            Context context = weakReference.get();
+
+            ((ReportViewActivity) context).mMap.addPolyline(polylineOptions);
+        }
     }
 }
+
+// todo: enhance
