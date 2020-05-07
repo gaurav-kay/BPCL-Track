@@ -54,7 +54,7 @@ public class MapsActivity extends FragmentActivity {
     private static final long FASTEST_UPDATE_INTERVAL = 5000L;
     private static final long UPDATE_INTERVAL = 10000L;
     private static final float DEVIATION_THRESHOLD = 500f;
-    private static final long REPORT_INTERVAL = 5 * 60 * 1000;
+    private static final long REPORT_INTERVAL = 1 * 60 * 1000;
 
     private boolean isTripStarted = false;
     private boolean isReportRecentlyMade = false;
@@ -75,6 +75,7 @@ public class MapsActivity extends FragmentActivity {
     private SupportMapFragment mapFragment;
 
     private ArrayList<Location> locations;
+    private ArrayList<HashMap<String, Object>> deviationHashMaps;
     protected ArrayList<LatLng> pipelineLatLngs = new ArrayList<>();
     private HashMap<String, Object> tripDetails;
     private ArrayList<Polyline> tripPolylines;
@@ -130,6 +131,7 @@ public class MapsActivity extends FragmentActivity {
                     Toast.makeText(MapsActivity.this, "Trip started", Toast.LENGTH_SHORT).show();
 
                     locations = new ArrayList<>();
+                    deviationHashMaps = new ArrayList<>();  // update map w deviations
                     tripDetails = new HashMap<>();
                     tripDetails.put("startTime", new Date().getTime());
 //                    tripDetails.put("isOngoing", true);
@@ -175,7 +177,7 @@ public class MapsActivity extends FragmentActivity {
     }
 
     private void loadPipelines() {
-        LoadKml loadKml = new LoadKml(this, true);
+        LoadKml loadKml = new LoadKml(this, true, false, true);
         loadKml.execute();
     }
 
@@ -243,16 +245,24 @@ public class MapsActivity extends FragmentActivity {
                 // todo: notification
                 Toast.makeText(MapsActivity.this, "Going off course", Toast.LENGTH_SHORT).show();
 
+                HashMap<String, Object> deviationHashMap = new HashMap<>();
+                deviationHashMap.put("reportTime", new Date().getTime());
+                deviationHashMap.put("reportLocation", locationResult.getLastLocation());
+                deviationHashMaps.add(deviationHashMap);
                 makeDeviationReport(locationResult.getLastLocation());
             }
 
-            updateDB(locations);
+            updateDB(locations, deviationHashMaps);
         }
     };
 
-    private void updateDB(ArrayList<Location> currentLocations) {
+    private void makeDeviationReport(Location lastLocation) {
+    }
+
+    private void updateDB(ArrayList<Location> currentLocations, ArrayList<HashMap<String, Object>> currentDeviationHashMaps) {
         HashMap<String, Object> updateMap = new HashMap<>();
         updateMap.put("locations", currentLocations);
+        updateMap.put("deviations", currentDeviationHashMaps);
         if (firstDBUpdate) {
             updateMap.put("startTime", tripDetails.get("startTime"));
             updateMap.put("isOngoing", true);
@@ -268,28 +278,6 @@ public class MapsActivity extends FragmentActivity {
                 .document(simpleDateFormat.format(new Date((long) tripDetails.get("startTime"))))
 
                 .set(updateMap, SetOptions.merge())
-
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG, "onFailure: ", e);
-                    }
-                });
-    }
-
-    private void makeDeviationReport(Location lastLocation) {
-        HashMap<String, Object> map = new HashMap<>();
-
-        map.put("locations", locations);
-        map.put("lastLocation", lastLocation);
-        map.put("reportTime", new Date().getTime());
-        map.put("uid", mAuth.getCurrentUser().getUid());
-
-        db.collection("deviationReports")
-                .document(mAuth.getCurrentUser().getUid() + " " + simpleDateFormat.format(new Date()))
-
-                .set(map)
-
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -304,6 +292,7 @@ public class MapsActivity extends FragmentActivity {
                         }, REPORT_INTERVAL);
                     }
                 })
+
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
@@ -311,6 +300,41 @@ public class MapsActivity extends FragmentActivity {
                     }
                 });
     }
+
+//    private void makeDeviationReport(Location lastLocation) {
+//        HashMap<String, Object> map = new HashMap<>();
+//
+//        map.put("locations", locations);
+//        map.put("lastLocation", lastLocation);
+//        map.put("reportTime", new Date().getTime());
+//        map.put("uid", mAuth.getCurrentUser().getUid());
+//
+//        db.collection("deviationReports")
+//                .document(mAuth.getCurrentUser().getUid() + " " + simpleDateFormat.format(new Date()))
+//
+//                .set(map)
+//
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        isReportRecentlyMade = true;
+//
+//                        Handler handler = new Handler();
+//                        handler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                isReportRecentlyMade = false;
+//                            }
+//                        }, REPORT_INTERVAL);
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.e(TAG, "onFailure: ", e);
+//                    }
+//                });
+//    }
 
     private boolean isTripDeviated(Location lastLocation) {
         boolean deviated = true;
@@ -346,3 +370,4 @@ public class MapsActivity extends FragmentActivity {
 
 // todo: change distance for location req
 // todo: add fab to view reports
+// todo: delet imagess

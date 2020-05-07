@@ -134,7 +134,7 @@ public class ReportViewActivity extends AppCompatActivity {
     }
 
     private void loadPipelines() {
-        LoadKml loadKml = new LoadKml(this, false);
+        LoadKml loadKml = new LoadKml(this, false, true, false);
         loadKml.execute();
     }
 

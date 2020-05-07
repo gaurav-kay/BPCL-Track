@@ -26,10 +26,10 @@ public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
     private static final String TAG = "TAG";
 
     private WeakReference<Context> weakReference;
-    private boolean isMapsActivity;
+    private boolean isMapsActivity, isReportViewActivity, isTripViewActivity;
     private LatLngBounds.Builder cameraBounds = new LatLngBounds.Builder();
 
-    public LoadKml(Context context, boolean isMapsActivity) {
+    public LoadKml(Context context, boolean isMapsActivity, boolean isReportViewActivity, boolean isTripViewActivity) {
 //        if (reportViewActivity == null) {
 //            this.mapsActivityWeakReference = new WeakReference<>(mapsActivity);
 //        } else {
@@ -37,6 +37,8 @@ public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
 //        }
         this.weakReference = new WeakReference<>(context);
         this.isMapsActivity = isMapsActivity;
+        this.isReportViewActivity = isReportViewActivity;
+        this.isTripViewActivity = isTripViewActivity;
     }
 
     @Override
@@ -77,17 +79,16 @@ public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
     protected void onPostExecute(PolylineOptions polylineOptions) {
         super.onPostExecute(polylineOptions);
 
+        Context context = weakReference.get();
         if (isMapsActivity) {
-            Context context = weakReference.get();
-
             ((MapsActivity) context).pipelineLatLngs = (ArrayList<LatLng>) polylineOptions.getPoints();
             ((MapsActivity) context).mMap.addPolyline(polylineOptions);
             ((MapsActivity) context).mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(this.cameraBounds.build(), 150));
             ((MapsActivity) context).progressBar.setVisibility(View.INVISIBLE);
-        } else {
-            Context context = weakReference.get();
-
+        } else if (isReportViewActivity) {
             ((ReportViewActivity) context).mMap.addPolyline(polylineOptions);
+        } else if (isTripViewActivity) {
+            ((TripViewActivity) context).mMap.addPolyline(polylineOptions);
         }
     }
 }
