@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -71,7 +72,8 @@ public class MapsActivity extends FragmentActivity {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
     protected ProgressBar progressBar;
-    private Button startStopTrip, alertButton;
+//    private Button startStopTrip, alertButton;
+    private FloatingActionButton startStopTripFab, alertFab;
     private SupportMapFragment mapFragment;
 
     private ArrayList<Location> locations;
@@ -89,11 +91,14 @@ public class MapsActivity extends FragmentActivity {
         mAuth = FirebaseAuth.getInstance();
 
         progressBar = findViewById(R.id.progress_bar);
-        startStopTrip = findViewById(R.id.start_stop_trip);
-        alertButton = findViewById(R.id.alert_button);
+//        startStopTrip = findViewById(R.id.start_stop_trip);
+//        alertButton = findViewById(R.id.alert_button);
+        startStopTripFab = findViewById(R.id.start_stop_trip_fab);
+        alertFab = findViewById(R.id.alert_fab);
         mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
 
         progressBar.setVisibility(View.VISIBLE);
+        alertFab.setVisibility(View.GONE);
 
         Dexter.withContext(this)
                 .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -124,7 +129,8 @@ public class MapsActivity extends FragmentActivity {
                 })
                 .check();
 
-        startStopTrip.setOnClickListener(new View.OnClickListener() {
+        // todo
+        startStopTripFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!isTripStarted) {
@@ -142,9 +148,12 @@ public class MapsActivity extends FragmentActivity {
                             MapsActivity.this.getMainLooper()
                     );
 
-                    alertButton.setEnabled(false);
-                    alertButton.setVisibility(View.VISIBLE);
-                    alertButton.setText(R.string.getting_location);
+//                    alertButton.setEnabled(false);
+//                    alertButton.setVisibility(View.VISIBLE);
+//                    alertFab.setText(R.string.getting_location);
+                    alertFab.setEnabled(false);
+                    alertFab.setTitle(getResources().getString(R.string.getting_location));
+                    alertFab.setVisibility(View.VISIBLE);
                 } else {
                     Toast.makeText(MapsActivity.this, "Trip Completed, Uploading...", Toast.LENGTH_SHORT).show();
 
@@ -153,8 +162,10 @@ public class MapsActivity extends FragmentActivity {
                     tripDetails.put("endTime", new Date().getTime());
                     tripDetails.put("isOngoing", false);  // todo: some error might be here
 
-                    startStopTrip.setText(R.string.start_button_text);
-                    alertButton.setVisibility(View.INVISIBLE);
+//                    startStopTrip.setText(R.string.start_button_text);
+//                    alertButton.setVisibility(View.INVISIBLE);
+                    startStopTripFab.setTitle(getResources().getString(R.string.start_button_text));
+                    alertFab.setVisibility(View.GONE);
 
                     // end marker
                     endLocationMarker = mMap.addMarker(new MarkerOptions().position(latLngFromLocation(locations.get(locations.size() - 1))).title("End Location"));
@@ -166,7 +177,8 @@ public class MapsActivity extends FragmentActivity {
             }
         });
 
-        alertButton.setOnClickListener(new View.OnClickListener() {
+        // todo
+        alertFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MapsActivity.this, ReportActivity.class);
@@ -237,9 +249,12 @@ public class MapsActivity extends FragmentActivity {
             if (!isFirstLocationRecieved) {
                 isFirstLocationRecieved = true;
 
-                alertButton.setVisibility(View.VISIBLE);
-                alertButton.setEnabled(true);
-                alertButton.setText(R.string.report);
+//                alertButton.setVisibility(View.VISIBLE);
+//                alertButton.setEnabled(true);
+//                alertButton.setText(R.string.report);
+                alertFab.setVisibility(View.VISIBLE);
+                alertFab.setEnabled(true);
+                alertFab.setTitle(getResources().getString(R.string.report));
             }
             if (isTripDeviated(locationResult.getLastLocation()) && !isReportRecentlyMade) {
                 // todo: notification
@@ -269,7 +284,8 @@ public class MapsActivity extends FragmentActivity {
             updateMap.put("by", mAuth.getCurrentUser().getEmail());
             firstDBUpdate = false;
             isTripStarted = true;
-            startStopTrip.setText(R.string.stop_button_text);
+//            startStopTrip.setText(R.string.stop_button_text);
+            startStopTripFab.setTitle(getResources().getString(R.string.stop_button_text));
         }
 
         db.collection("rmpWorkers")

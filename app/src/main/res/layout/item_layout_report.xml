@@ -34,25 +34,26 @@
             <TextView
                 android:id="@+id/report_report_by_text_view"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                style="@style/StaticTextViewThemeRecyclerView" />
 
             <TextView
                 android:id="@+id/report_report_type_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/StaticTextViewTheme" />
+                style="@style/StaticTextViewThemeRecyclerView" />
 
             <TextView
                 android:id="@+id/report_report_priority_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/StaticTextViewTheme" />
+                style="@style/StaticTextViewThemeRecyclerView" />
 
             <TextView
                 android:id="@+id/report_description_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/StaticTextViewTheme" />
+                style="@style/StaticTextViewThemeRecyclerView" />
 
         </LinearLayout>
 

@@ -272,6 +272,7 @@ public class ReportActivity extends AppCompatActivity {
                     .load(imageBitmaps.get(position))
                     .into(imageViewHolder.pictureImageView);
             descriptionEditTexts.add(imageViewHolder.pictureDescription);
+            imageViewHolder.pictureDescription.setText(descriptionEditTexts.get(position).getText());
         }
 
         @Override

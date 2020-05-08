@@ -105,7 +105,11 @@ public class ReportViewActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setAdapter(new ImagesAdapter((ArrayList<HashMap<String, Object>>) report.get("images")));
+        if (!report.containsKey("images")) {
+            recyclerView.setAdapter(null);
+        } else {
+            recyclerView.setAdapter(new ImagesAdapter((ArrayList<HashMap<String, Object>>) report.get("images")));
+        }
 
         acknowledgeButton.setOnClickListener(new View.OnClickListener() {
             @Override

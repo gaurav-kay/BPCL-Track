@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,6 +43,7 @@ public class TripViewActivity extends AppCompatActivity {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
     private SupportMapFragment mapFragment;
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,7 @@ public class TripViewActivity extends AppCompatActivity {
         Log.wtf(TAG, "onCreate: " + tripDocumentReference.getId());
 
         mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.trip_map);
+        textView = findViewById(R.id.trip_trip_summary);
 
         ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
         DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -68,6 +71,17 @@ public class TripViewActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 if (documentSnapshot.exists()) {
+                                    String setText = "";
+                                    if (documentSnapshot.contains("by")) {
+                                        setText += "Trip by: " + String.valueOf(documentSnapshot.get("by"))
+                                                + "\n\n";
+                                    }
+                                    setText += "Trip started at " +
+                                            simpleDateFormat.format(new Date(Long.parseLong(String.valueOf(documentSnapshot.get("startTime")))))
+                                            + "\n" +
+                                            "Trip ended at " +
+                                            simpleDateFormat.format(new Date(Long.parseLong(String.valueOf(documentSnapshot.get("endTime")))));
+                                    textView.setText(setText);
                                     loadTrip(documentSnapshot.getData());
                                 }
                             }

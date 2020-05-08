@@ -3,9 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MapsActivity">
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
@@ -18,35 +19,68 @@
         android:visibility="visible"
         android:layout_centerInParent="true" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:orientation="horizontal">-->
+
+<!--        <Button-->
+<!--            android:id="@+id/start_stop_trip"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="40dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:textColor="#000"-->
+<!--            android:textStyle="bold"-->
+<!--            android:alpha="0.8"-->
+<!--            android:text="@string/start_button_text" />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/alert_button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="40dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:visibility="invisible"-->
+<!--            android:textColor="#000"-->
+<!--            android:textStyle="bold"-->
+<!--            android:alpha="0.8"-->
+<!--            android:text="@string/report" />-->
+
+<!--    </LinearLayout>-->
+
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:orientation="horizontal">
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="20dp"
+        app:fab_addButtonColorNormal="@color/colorAccent"
+        app:fab_addButtonColorPressed="@color/colorAccent"
+        app:fab_addButtonPlusIconColor="#FFF"
+        app:fab_labelStyle="@style/FabLabelStyle">
 
-        <Button
-            android:id="@+id/start_stop_trip"
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/start_stop_trip_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="40dp"
-            android:layout_weight="1"
-            android:textColor="#000"
-            android:textStyle="bold"
-            android:alpha="0.8"
-            android:text="@string/start_button_text" />
+            app:fab_colorNormal="#FFF"
+            app:fab_colorPressed="#FFF"
+            app:fab_size="mini"
+            app:fab_icon="@drawable/ic_start_stop_near_me_black_24dp"
+            app:fab_title="@string/start_button_text" />
 
-        <Button
-            android:id="@+id/alert_button"
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/alert_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="40dp"
-            android:layout_weight="1"
-            android:visibility="invisible"
-            android:textColor="#000"
-            android:textStyle="bold"
-            android:alpha="0.8"
-            android:text="@string/report" />
+            app:fab_colorNormal="#FFF"
+            app:fab_colorPressed="#FFF"
+            app:fab_size="mini"
+            app:fab_icon="@drawable/ic_add_alert_black_24dp"
+            app:fab_title="@string/report" />
 
-    </LinearLayout>
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 </RelativeLayout>
