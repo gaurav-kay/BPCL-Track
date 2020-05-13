@@ -85,14 +85,14 @@
         app:fab_labelStyle="@style/FabLabelStyle">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/start_stop_trip_fab"
+            android:id="@+id/take_measurement_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_colorNormal="#FFF"
             app:fab_colorPressed="#FFF"
             app:fab_size="mini"
-            app:fab_icon="@drawable/ic_start_stop_near_me_black_24dp"
-            app:fab_title="@string/start_button_text" />
+            app:fab_icon="@drawable/ic_take_measurement_24dp"
+            app:fab_title="@string/measure" />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/alert_fab"
@@ -101,8 +101,18 @@
             app:fab_colorNormal="#FFF"
             app:fab_colorPressed="#FFF"
             app:fab_size="mini"
-            app:fab_icon="@drawable/ic_add_alert_black_24dp"
+            app:fab_icon="@drawable/ic_add_alert_24dp"
             app:fab_title="@string/report" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/start_stop_trip_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorNormal="#FFF"
+            app:fab_colorPressed="#FFF"
+            app:fab_size="mini"
+            app:fab_icon="@drawable/ic_start_stop_near_me_24dp"
+            app:fab_title="@string/start_button_text" />
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

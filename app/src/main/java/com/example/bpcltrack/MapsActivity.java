@@ -78,7 +78,7 @@ public class MapsActivity extends FragmentActivity {
 
     protected ProgressBar progressBar;
 //    private Button startStopTrip, alertButton;
-    private FloatingActionButton startStopTripFab, alertFab;
+    private FloatingActionButton startStopTripFab, alertFab, takeMeasurementFab;
     private SupportMapFragment mapFragment;
     private Spinner chainageSpinner;
 
@@ -99,13 +99,15 @@ public class MapsActivity extends FragmentActivity {
         progressBar = findViewById(R.id.progress_bar);
 //        startStopTrip = findViewById(R.id.start_stop_trip);
 //        alertButton = findViewById(R.id.alert_button);
-        startStopTripFab = findViewById(R.id.start_stop_trip_fab);
         chainageSpinner = findViewById(R.id.chainage_spinner);
+        startStopTripFab = findViewById(R.id.start_stop_trip_fab);
+        takeMeasurementFab = findViewById(R.id.take_measurement_fab);
         alertFab = findViewById(R.id.alert_fab);
         mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
 
         progressBar.setVisibility(View.VISIBLE);
         alertFab.setVisibility(View.GONE);
+//        takeMeasurementFab.setVisibility(View.GONE);
         chainageSpinner.setVisibility(View.GONE);
 
         Dexter.withContext(this)
@@ -154,7 +156,7 @@ public class MapsActivity extends FragmentActivity {
                             locationRequest,
                             locationCallback,
                             MapsActivity.this.getMainLooper()
-                    );
+                    );  // kept here assuming no need for location data when trip hasn't started but for measurement, we need to always be listening
 
 //                    alertButton.setEnabled(false);
 //                    alertButton.setVisibility(View.VISIBLE);
@@ -176,6 +178,7 @@ public class MapsActivity extends FragmentActivity {
                     startStopTripFab.setTitle(getResources().getString(R.string.start_button_text));
                     alertFab.setVisibility(View.GONE);
                     chainageSpinner.setVisibility(View.GONE);
+//                    takeMeasurementFab.setVisibility(View.GONE);
 
                     // end marker
                     endLocationMarker = mMap.addMarker(new MarkerOptions().position(latLngFromLocation(locations.get(locations.size() - 1))).title("End Location"));
@@ -199,6 +202,19 @@ public class MapsActivity extends FragmentActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MapsActivity.this, ReportActivity.class);
                 intent.putExtra("locations", locations);
+                startActivity(intent);
+            }
+        });
+
+        takeMeasurementFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsActivity.this, MeasurementActivity.class);
+
+                if (isFirstLocationRecieved) {
+                    intent.putExtra("location", locations.get(locations.size() - 1));
+                }
+
                 startActivity(intent);
             }
         });
@@ -286,6 +302,7 @@ public class MapsActivity extends FragmentActivity {
 //                alertButton.setEnabled(true);
 //                alertButton.setText(R.string.report);
                 alertFab.setVisibility(View.VISIBLE);
+                takeMeasurementFab.setVisibility(View.VISIBLE);
                 chainageSpinner.setVisibility(View.VISIBLE);
                 alertFab.setEnabled(true);
                 alertFab.setTitle(getResources().getString(R.string.report));
