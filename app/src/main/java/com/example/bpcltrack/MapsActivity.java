@@ -10,8 +10,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -56,6 +58,9 @@ public class MapsActivity extends FragmentActivity {
     private static final long UPDATE_INTERVAL = 10000L;
     private static final float DEVIATION_THRESHOLD = 500f;
     private static final long REPORT_INTERVAL = 1 * 60 * 1000;
+    private static final int CHAINAGE_INTERVAL = 10;
+    private static final int CHAINAGE_START = 0;
+    private static final int CHAINAGE_END = 600;
 
     private boolean isTripStarted = false;
     private boolean isReportRecentlyMade = false;
@@ -75,6 +80,7 @@ public class MapsActivity extends FragmentActivity {
 //    private Button startStopTrip, alertButton;
     private FloatingActionButton startStopTripFab, alertFab;
     private SupportMapFragment mapFragment;
+    private Spinner chainageSpinner;
 
     private ArrayList<Location> locations;
     private ArrayList<HashMap<String, Object>> deviationHashMaps;
@@ -94,11 +100,13 @@ public class MapsActivity extends FragmentActivity {
 //        startStopTrip = findViewById(R.id.start_stop_trip);
 //        alertButton = findViewById(R.id.alert_button);
         startStopTripFab = findViewById(R.id.start_stop_trip_fab);
+        chainageSpinner = findViewById(R.id.chainage_spinner);
         alertFab = findViewById(R.id.alert_fab);
         mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
 
         progressBar.setVisibility(View.VISIBLE);
         alertFab.setVisibility(View.GONE);
+        chainageSpinner.setVisibility(View.GONE);
 
         Dexter.withContext(this)
                 .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -154,6 +162,7 @@ public class MapsActivity extends FragmentActivity {
                     alertFab.setEnabled(false);
                     alertFab.setTitle(getResources().getString(R.string.getting_location));
                     alertFab.setVisibility(View.VISIBLE);
+                    chainageSpinner.setVisibility(View.VISIBLE);
                 } else {
                     Toast.makeText(MapsActivity.this, "Trip Completed, Uploading...", Toast.LENGTH_SHORT).show();
 
@@ -166,10 +175,17 @@ public class MapsActivity extends FragmentActivity {
 //                    alertButton.setVisibility(View.INVISIBLE);
                     startStopTripFab.setTitle(getResources().getString(R.string.start_button_text));
                     alertFab.setVisibility(View.GONE);
+                    chainageSpinner.setVisibility(View.GONE);
 
                     // end marker
                     endLocationMarker = mMap.addMarker(new MarkerOptions().position(latLngFromLocation(locations.get(locations.size() - 1))).title("End Location"));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(cameraBounds.build(), 150));
+
+                    // get spinner selection
+                    ArrayList<String> choices = getChainageSpinnerChoices();
+                    if (!choices.get(chainageSpinner.getSelectedItemPosition()).equals(getResources().getString(R.string.enter_chainage_link))) {
+                        tripDetails.put("chainage", choices.get(chainageSpinner.getSelectedItemPosition()));
+                    }
 
                     uploadTrip();
                     isTripStarted = false;
@@ -186,6 +202,23 @@ public class MapsActivity extends FragmentActivity {
                 startActivity(intent);
             }
         });
+
+        // spinner
+        ArrayList<String> choices = getChainageSpinnerChoices();
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, choices);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        chainageSpinner.setAdapter(spinnerAdapter);
+    }
+
+    private ArrayList<String> getChainageSpinnerChoices() {
+        ArrayList<String> choices = new ArrayList<>();
+        choices.add(getResources().getString(R.string.enter_chainage_link));
+
+        for (int start = CHAINAGE_START; start < CHAINAGE_END - CHAINAGE_INTERVAL; start += CHAINAGE_INTERVAL) {
+            choices.add(start + "-" + (start + CHAINAGE_INTERVAL) + " kms");
+        }
+
+        return choices;
     }
 
     private void loadPipelines() {
@@ -253,6 +286,7 @@ public class MapsActivity extends FragmentActivity {
 //                alertButton.setEnabled(true);
 //                alertButton.setText(R.string.report);
                 alertFab.setVisibility(View.VISIBLE);
+                chainageSpinner.setVisibility(View.VISIBLE);
                 alertFab.setEnabled(true);
                 alertFab.setTitle(getResources().getString(R.string.report));
             }

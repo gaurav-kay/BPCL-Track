@@ -16,4 +16,5 @@
     <string name="getting_location">Getting Location…</string>
     <string name="title_activity_officer">Officer</string>
     <string name="acknowledge">ACKNOWLEDGE</string>
+    <string name="enter_chainage_link">Enter Chainage link…</string>
 </resources>

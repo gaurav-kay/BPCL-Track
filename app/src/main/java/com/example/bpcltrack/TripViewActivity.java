@@ -81,6 +81,12 @@ public class TripViewActivity extends AppCompatActivity {
                                             + "\n" +
                                             "Trip ended at " +
                                             simpleDateFormat.format(new Date(Long.parseLong(String.valueOf(documentSnapshot.get("endTime")))));
+                                    if (documentSnapshot.contains("chainage")) {
+                                        setText += "\n" +
+                                                "Chainage: " +
+                                                documentSnapshot.get("chainage");
+                                    }
+
                                     textView.setText(setText);
                                     loadTrip(documentSnapshot.getData());
                                 }

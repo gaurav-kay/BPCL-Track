@@ -12,6 +12,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="#FFF"
+        android:layout_margin="30dp"
+        app:cardCornerRadius="5dp"
+        android:padding="10dp"
+        android:alpha="0.9"
+        android:gravity="center">
+
+        <Spinner
+            android:id="@+id/chainage_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:layout_margin="10dp"
+            android:textAlignment="center"
+            android:layout_centerHorizontal="true" />
+    </androidx.cardview.widget.CardView>
+
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
