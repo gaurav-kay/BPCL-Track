@@ -1,9 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MeasurementActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_margin="10dp"
+        android:scrollbars="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/take_measurement"
+            android:textColor="#000"
+            android:textSize="30sp"
+            android:layout_marginBottom="30dp"
+            android:layout_margin="20dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_margin="10dp"
+            android:background="#777" />
+
+        <TextView
+            style="@style/StaticTextViewTheme"
+            android:text="@string/enter_tlp_number" />
+        <Spinner
+            android:id="@+id/tlp_number_spinner"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            style="@style/StaticTextViewTheme"
+            android:text="@string/enter_tlp_type" />
+        <Spinner
+            android:id="@+id/tlp_type_spinner"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            style="@style/StaticTextViewTheme"
+            android:text="@string/enter_psp_value" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="wrap_content">
+            <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/psp_seek_bar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:progress="5"
+                android:max="10"
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_weight="0.8" />
+            <TextView
+                android:id="@+id/psp_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:layout_weight="0.2" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/StaticTextViewTheme"
+            android:text="@string/enter_ac_value" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="wrap_content">
+            <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/ac_seek_bar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:progress="5"
+                android:max="10"
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_weight="0.8" />
+            <TextView
+                android:id="@+id/ac_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:layout_weight="0.2" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/StaticTextViewTheme"
+            android:text="@string/enter_remarks" />
+        <EditText
+            android:id="@+id/measurement_remarks_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="@string/description_static"
+            android:padding="10dp"
+            android:importantForAutofill="yes"
+            android:inputType="textMultiLine" />
+
+        <ImageView
+            android:id="@+id/measurement_image_view"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/measurement_take_picture_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="@string/attach_picture" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_margin="10dp"
+            android:background="#777" />
+
+        <Button
+            android:id="@+id/submit_measurement_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/getting_location"
+            android:enabled="false"
+            android:layout_margin="20dp"
+            android:textSize="20sp"
+            android:textColor="#000" />
+
+        <ProgressBar
+            android:layout_margin="30dp"
+            android:id="@+id/submit_measurement_progress_bar"
+            android:layout_width="wrap_content"
+            android:visibility="invisible"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
