@@ -228,6 +228,12 @@ public class ReportActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         // todo: add progress bar
+                        for (int i = 0; i < photoFiles.size(); i++) {
+                            if (!photoFiles.get(i).delete()) {
+                                Log.e(TAG, "onSuccess: IMAGE FILE NOT DELETED");
+                            }
+                        }
+
                         progressBar.setVisibility(View.GONE);
                         Toast.makeText(ReportActivity.this, "Report Submitted", Toast.LENGTH_SHORT).show();
                         ReportActivity.this.finish();
@@ -302,3 +308,5 @@ public class ReportActivity extends AppCompatActivity {
         }
     }
 }
+
+// todo: on back press restart report
