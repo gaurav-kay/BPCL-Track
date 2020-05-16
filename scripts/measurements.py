@@ -22,10 +22,13 @@ fieldnames = [
     'by',
     'tlpNumber',
     'tlpType',
+    'chainage',
     'latitude',
     'longitude',
     'pspValue',
     'acValue',
+    'mgznAnodeValue',
+    'maintenanceRequired',
     'remarks',
     'imageUrl'
 ]

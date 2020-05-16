@@ -48,9 +48,6 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -63,12 +60,23 @@ public class MeasurementActivity extends AppCompatActivity {
 
     private static final long FASTEST_UPDATE_INTERVAL = 5000L;
     private static final long UPDATE_INTERVAL = 10000L;
-    private static final double MIN_VOLT_INTERVAL = 0.01;
-    private static final double NORMAL_PSP_VOLT = 1.16;
-    private static final double NORMAL_AC_VOLT = 1.06;
-    private static final int TLP_START = 0;
-    private static final int TLP_END = 40;
-    private static final String[] tlpTypes = new String[]{"Choose TLP Type…", "AJB", "BJB", "CJB"};
+
+    private static final double MIN_PSP_VOLT_INTERVAL = 0.005;
+    private static final double NORMAL_PSP_VOLT = -1.025;
+    private static final int MAX_DIVISIONS_PSP = 70;
+
+    private static final double MIN_AC_VOLT_INTERVAL = 0.1;
+    private static final double NORMAL_AC_VOLT = 8;
+    private static final int MAX_DIVISIONS_AC = 140;
+
+    private static final double MIN_MG_ZN_ANODE_VOLT_INTERVAL = 0.025;
+    private static final double NORMAL_MG_ZN_ANODE_VOLT = 0.8;
+    private static final int MAX_DIVISIONS_MG_ZN_ANODE = 64;
+//    private static final int TLP_START = 0;
+//    private static final int TLP_END = 40;
+    private static final String[] tlpTypes =
+        new String[]{"Choose TLP Type…", "A", "B", "L", "B+L", "A+TC", "D", "E", "CJB", "AJB"};
+    private static final String[] maintenanceRequiredChoices = new String[]{"No", "Yes"};
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private Location location;
@@ -76,12 +84,13 @@ public class MeasurementActivity extends AppCompatActivity {
     private LocationRequest locationRequest;
     private File imageFile;
     private Uri imageUri;
-    private float pspValue, acValue;
+    private float pspValue, acValue, mgznAnodeValue;
 
-    private Spinner tlpNumberSpinner, tlpTypeSpinner;
-    private SeekBar pspSeekBar, acSeekBar;
-    private TextView pspTextView, acTextView;
-    private EditText remarksEditText;
+//    private Spinner tlpNumberSpinner;
+    private Spinner tlpTypeSpinner, maintenanceRequiredSpinner;
+    private SeekBar pspSeekBar, acSeekBar, mgznAnodeSeekBar;
+    private TextView pspTextView, acTextView, mgznAnodeTextView;
+    private EditText remarksEditText, tlpNumberEditText, chainageEditText;
     private ImageView imageView;
     private Button attachPictureButton, submitMeasurementButton;
     private ProgressBar progressBar;
@@ -91,13 +100,18 @@ public class MeasurementActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_measurement);
 
-        tlpNumberSpinner = findViewById(R.id.tlp_number_spinner);
+//        tlpNumberSpinner = findViewById(R.id.tlp_number_spinner);
+        chainageEditText = findViewById(R.id.chainage_edit_text);
+        tlpNumberEditText = findViewById(R.id.tlp_number_edit_text);
         tlpTypeSpinner = findViewById(R.id.tlp_type_spinner);
         pspSeekBar = findViewById(R.id.psp_seek_bar);
         pspTextView = findViewById(R.id.psp_text_view);
         acSeekBar = findViewById(R.id.ac_seek_bar);
         acTextView = findViewById(R.id.ac_text_view);
+        mgznAnodeSeekBar = findViewById(R.id.mg_zn_anode_seek_bar);
+        mgznAnodeTextView = findViewById(R.id.mg_zn_anode_text_view);
         remarksEditText = findViewById(R.id.measurement_remarks_edit_text);
+        maintenanceRequiredSpinner = findViewById(R.id.maintenance_required_spinner);
         imageView = findViewById(R.id.measurement_image_view);
         attachPictureButton = findViewById(R.id.measurement_take_picture_button);
         submitMeasurementButton = findViewById(R.id.submit_measurement_button);
@@ -109,22 +123,30 @@ public class MeasurementActivity extends AppCompatActivity {
         attachPictureButton.setText(getString(R.string.attach_picture));
 
         // set up seekbar
-        pspSeekBar.setProgress(pspSeekBar.getMax() / 2);
-        acSeekBar.setProgress(acSeekBar.getMax() / 2);
+        pspSeekBar.setMax(MAX_DIVISIONS_PSP);
+        pspSeekBar.setProgress(MAX_DIVISIONS_PSP / 2);
         String setText = NORMAL_PSP_VOLT + "V";
         pspTextView.setText(setText);
         pspValue = (float) NORMAL_PSP_VOLT;
+
+        acSeekBar.setMax(MAX_DIVISIONS_AC);
+        acSeekBar.setProgress(MAX_DIVISIONS_AC / 2);
         setText = NORMAL_AC_VOLT + "V";
         acTextView.setText(setText);
         acValue = (float) NORMAL_AC_VOLT;
+
+        mgznAnodeSeekBar.setMax(MAX_DIVISIONS_MG_ZN_ANODE);
+        mgznAnodeSeekBar.setProgress(MAX_DIVISIONS_MG_ZN_ANODE / 2);
+        setText = NORMAL_MG_ZN_ANODE_VOLT + "V";
+        mgznAnodeTextView.setText(setText);
+        mgznAnodeValue = (float) NORMAL_MG_ZN_ANODE_VOLT;
 
         pspSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 float val = (float) (NORMAL_PSP_VOLT + ((((double) progress) -
-                        ((double) ((double) (seekBar.getMax()) / 2.0D))) * MIN_VOLT_INTERVAL));  // !!!!!!
+                        ((double) ((double) (seekBar.getMax()) / 2.0D))) * MIN_PSP_VOLT_INTERVAL));  // !!!!!!
                 pspValue = val;
-                Log.d(TAG, "onProgressChanged: " + pspValue);
                 String setText = val + "V";
                 pspTextView.setText(setText);
             }
@@ -139,9 +161,8 @@ public class MeasurementActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 float val = (float) (NORMAL_AC_VOLT + ((((double) progress) -
-                        ((double) ((double) ((double) seekBar.getMax()) / ((double) 2.0)))) * ((double) MIN_VOLT_INTERVAL)));  // !!!! BigDecimal
+                        ((double) ((double) ((double) seekBar.getMax()) / ((double) 2.0)))) * ((double) MIN_AC_VOLT_INTERVAL)));  // !!!! BigDecimal
                 acValue = val;
-                Log.d(TAG, "onProgressChanged: " + acValue);
                 String setText = val + "V";
                 acTextView.setText(setText);
             }
@@ -152,15 +173,35 @@ public class MeasurementActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
+        mgznAnodeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                float val = (float) (NORMAL_MG_ZN_ANODE_VOLT + ((((double) progress) -
+                        ((double) ((double) ((double) seekBar.getMax()) / ((double) 2.0)))) * ((double) MIN_MG_ZN_ANODE_VOLT_INTERVAL)));  // !!!! BigDecimal
+                mgznAnodeValue = val;
+                String setText = val + "V";
+                mgznAnodeTextView.setText(setText);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
 
         // spinner set up
-        ArrayAdapter<String> tlpNumberSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getTlpNumberSpinnerChoices());
-        tlpNumberSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        tlpNumberSpinner.setAdapter(tlpNumberSpinnerAdapter);
+//        ArrayAdapter<String> tlpNumberSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getTlpNumberSpinnerChoices());
+//        tlpNumberSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        tlpNumberSpinner.setAdapter(tlpNumberSpinnerAdapter);
 
         ArrayAdapter<String> tlpTypesSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tlpTypes);
         tlpTypesSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         tlpTypeSpinner.setAdapter(tlpTypesSpinnerAdapter);
+
+        ArrayAdapter<String> maintenanceRequiredSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, maintenanceRequiredChoices);
+        maintenanceRequiredSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        maintenanceRequiredSpinner.setAdapter(maintenanceRequiredSpinnerAdapter);
 
         attachPictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,6 +252,8 @@ public class MeasurementActivity extends AppCompatActivity {
     }
 
     private void submitMeasurement() {
+        // todo: add check to check if all fields are filled
+
         FirebaseAuth auth = FirebaseAuth.getInstance();
         StorageReference root = FirebaseStorage.getInstance().getReference();
 
@@ -222,15 +265,19 @@ public class MeasurementActivity extends AppCompatActivity {
         measurement.put("uid", auth.getCurrentUser().getUid());
         measurement.put("by", auth.getCurrentUser().getEmail());
         measurement.put("measurementTime", measurementTime);
-        if (tlpNumberSpinner.getSelectedItemPosition() != 0) {
-            measurement.put("tlpNumber", getTlpNumberSpinnerChoices().get(tlpNumberSpinner.getSelectedItemPosition()));
-        }
+//        if (tlpNumberSpinner.getSelectedItemPosition() != 0) {
+//            measurement.put("tlpNumber", getTlpNumberSpinnerChoices().get(tlpNumberSpinner.getSelectedItemPosition()));
+//        }
+        measurement.put("tlpNumber", tlpNumberEditText.getText().toString());
         if (tlpTypeSpinner.getSelectedItemPosition() != 0) {
             measurement.put("tlpType", tlpTypes[tlpTypeSpinner.getSelectedItemPosition()]);
         }
         measurement.put("pspValue", String.valueOf(pspValue));  // String.valueOf to compensate for float/double precision problem
         measurement.put("acValue", String.valueOf(acValue));  // String.valueOf to compensate for float/double precision problem
+        measurement.put("mgznAnodeValue", String.valueOf(mgznAnodeValue));  // String.valueOf to compensate for float/double precision problem
         measurement.put("remarks", remarksEditText.getText().toString());
+        measurement.put("maintenanceRequired", maintenanceRequiredChoices[maintenanceRequiredSpinner.getSelectedItemPosition()]);
+        measurement.put("chainage", chainageEditText.getText().toString());
 
         final StorageReference imageRef = root.child(auth.getCurrentUser().getEmail())
                 .child("measurements")
@@ -326,16 +373,16 @@ public class MeasurementActivity extends AppCompatActivity {
         }
     };
 
-    private ArrayList<String> getTlpNumberSpinnerChoices() {
-        ArrayList<String> tlpNumberChoices = new ArrayList<>();
-        tlpNumberChoices.add(getString(R.string.choose_tlp_number));
-
-        for (int i = TLP_START; i <= TLP_END; i++) {
-            tlpNumberChoices.add("SV-" + i);
-        }
-
-        return tlpNumberChoices;
-    }
+//    private ArrayList<String> getTlpNumberSpinnerChoices() {
+//        ArrayList<String> tlpNumberChoices = new ArrayList<>();
+//        tlpNumberChoices.add(getString(R.string.choose_tlp_number));
+//
+//        for (int i = TLP_START; i <= TLP_END; i++) {
+//            tlpNumberChoices.add("SV-" + i);
+//        }
+//
+//        return tlpNumberChoices;
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

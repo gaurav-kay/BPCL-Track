@@ -31,13 +31,44 @@
 
         <TextView
             style="@style/StaticTextViewTheme"
-            android:text="@string/enter_tlp_number" />
-        <Spinner
-            android:id="@+id/tlp_number_spinner"
-            android:gravity="center"
-            android:textAlignment="center"
+            android:text="@string/enter_chainage" />
+        <EditText
+            android:id="@+id/chainage_edit_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="#000"
+            android:inputType="number"
+            android:hint="@string/enter_chainage_link" />
+
+        <TextView
+            style="@style/StaticTextViewTheme"
+            android:text="@string/enter_tlp_number" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tlp_prefix_edit_text"
+                android:textColor="#000"
+                android:textSize="20sp" />
+            <EditText
+                android:id="@+id/tlp_number_edit_text"
+                android:layout_width="wrap_content"
+                android:minWidth="50dp"
+                android:textSize="20sp"
+                android:textColor="#000"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </LinearLayout>
+<!--        <Spinner-->
+<!--            android:id="@+id/tlp_number_spinner"-->
+<!--            android:gravity="center"-->
+<!--            android:textAlignment="center"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
 
         <TextView
             style="@style/StaticTextViewTheme"
@@ -60,9 +91,7 @@
                 android:id="@+id/psp_seek_bar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:progress="5"
-                android:max="10"
-                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                style="@style/SeekBarWithoutSteps"
                 android:layout_weight="0.8" />
             <TextView
                 android:id="@+id/psp_text_view"
@@ -85,12 +114,33 @@
                 android:id="@+id/ac_seek_bar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:progress="5"
-                android:max="10"
-                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                style="@style/SeekBarWithoutSteps"
                 android:layout_weight="0.8" />
             <TextView
                 android:id="@+id/ac_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:layout_weight="0.2" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/StaticTextViewTheme"
+            android:text="@string/enter_mg_zn_anode_value" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="wrap_content">
+            <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/mg_zn_anode_seek_bar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                style="@style/SeekBarWithoutSteps"
+                android:layout_weight="0.8" />
+            <TextView
+                android:id="@+id/mg_zn_anode_text_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
@@ -111,6 +161,18 @@
             android:padding="10dp"
             android:importantForAutofill="yes"
             android:inputType="textMultiLine" />
+
+        <TextView
+            style="@style/StaticTextViewTheme"
+            android:text="@string/is_maintenance_required" />
+        <Spinner
+            android:id="@+id/maintenance_required_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="80dp"
+            android:layout_marginBottom="30dp"
+            android:textAlignment="center" />
 
         <ImageView
             android:id="@+id/measurement_image_view"

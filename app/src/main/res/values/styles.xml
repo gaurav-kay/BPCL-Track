@@ -44,10 +44,15 @@
         <item name="android:padding">10dp</item>
     </style>
 
-    <!-- ImageView theme-->
+    <!-- ImageView theme -->
     <style name="ImageViewTheme">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- SeekBar without Tick -->
+    <style name="SeekBarWithoutSteps" parent="Base.Widget.AppCompat.SeekBar.Discrete">
+        <item name="tickMark">@null</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
