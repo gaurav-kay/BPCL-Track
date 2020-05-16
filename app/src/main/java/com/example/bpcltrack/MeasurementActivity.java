@@ -106,6 +106,7 @@ public class MeasurementActivity extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
         submitMeasurementButton.setText(getResources().getString(R.string.getting_location));
         submitMeasurementButton.setEnabled(false);
+        attachPictureButton.setText(getString(R.string.attach_picture));
 
         // set up seekbar
         pspSeekBar.setProgress(pspSeekBar.getMax() / 2);
@@ -123,6 +124,7 @@ public class MeasurementActivity extends AppCompatActivity {
                 float val = (float) (NORMAL_PSP_VOLT + ((((double) progress) -
                         ((double) ((double) (seekBar.getMax()) / 2.0D))) * MIN_VOLT_INTERVAL));  // !!!!!!
                 pspValue = val;
+                Log.d(TAG, "onProgressChanged: " + pspValue);
                 String setText = val + "V";
                 pspTextView.setText(setText);
             }
@@ -139,6 +141,7 @@ public class MeasurementActivity extends AppCompatActivity {
                 float val = (float) (NORMAL_AC_VOLT + ((((double) progress) -
                         ((double) ((double) ((double) seekBar.getMax()) / ((double) 2.0)))) * ((double) MIN_VOLT_INTERVAL)));  // !!!! BigDecimal
                 acValue = val;
+                Log.d(TAG, "onProgressChanged: " + acValue);
                 String setText = val + "V";
                 acTextView.setText(setText);
             }
@@ -225,8 +228,8 @@ public class MeasurementActivity extends AppCompatActivity {
         if (tlpTypeSpinner.getSelectedItemPosition() != 0) {
             measurement.put("tlpType", tlpTypes[tlpTypeSpinner.getSelectedItemPosition()]);
         }
-        measurement.put("pspValue", pspValue);
-        measurement.put("acValue", acValue);
+        measurement.put("pspValue", String.valueOf(pspValue));  // String.valueOf to compensate for float/double precision problem
+        measurement.put("acValue", String.valueOf(acValue));  // String.valueOf to compensate for float/double precision problem
         measurement.put("remarks", remarksEditText.getText().toString());
 
         final StorageReference imageRef = root.child(auth.getCurrentUser().getEmail())
@@ -343,6 +346,8 @@ public class MeasurementActivity extends AppCompatActivity {
 
             imageView.setImageBitmap(bitmap);
             imageView.setVisibility(View.VISIBLE);
+
+            attachPictureButton.setText(getString(R.string.retake_picture));
         }
     }
 

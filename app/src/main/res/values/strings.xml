@@ -25,4 +25,5 @@
     <string name="enter_ac_value">Enter AC Value</string>
     <string name="enter_remarks">Enter Remarks</string>
     <string name="choose_tlp_number">Choose TLP Number…</string>
+    <string name="retake_picture">RETAKE PICTURE</string>
 </resources>

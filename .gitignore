@@ -13,5 +13,11 @@
 .externalNativeBuild
 .cxx
 
+# Android
 app/src/main/res/raw/pipelines.kml
 app/src/main/res/raw/pipelines_csv.csv
+
+# Python Scripts
+scripts/.env
+scripts/credentials.json
+scripts/*.csv
