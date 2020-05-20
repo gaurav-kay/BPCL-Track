@@ -24,6 +24,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,11 +57,11 @@ public class TripViewActivity extends AppCompatActivity {
         mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.trip_map);
         textView = findViewById(R.id.trip_trip_summary);
 
-        ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        params.height = (int) (displaymetrics.heightPixels * 0.8);
-        mapFragment.getView().setLayoutParams(params);
+//        ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
+//        DisplayMetrics displaymetrics = new DisplayMetrics();
+//        this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+//        params.height = (int) (displaymetrics.heightPixels * 0.8);
+//        mapFragment.getView().setLayoutParams(params);
 
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -69,27 +70,48 @@ public class TripViewActivity extends AppCompatActivity {
                 tripDocumentReference.get()
                         .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
-                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                if (documentSnapshot.exists()) {
-                                    String setText = "";
-                                    if (documentSnapshot.contains("by")) {
-                                        setText += "Trip by: " + String.valueOf(documentSnapshot.get("by"))
-                                                + "\n\n";
-                                    }
-                                    setText += "Trip started at " +
-                                            simpleDateFormat.format(new Date(Long.parseLong(String.valueOf(documentSnapshot.get("startTime")))))
-                                            + "\n" +
-                                            "Trip ended at " +
-                                            simpleDateFormat.format(new Date(Long.parseLong(String.valueOf(documentSnapshot.get("endTime")))));
-                                    if (documentSnapshot.contains("chainage")) {
-                                        setText += "\n" +
-                                                "Chainage: " +
-                                                documentSnapshot.get("chainage");
-                                    }
+                            public void onSuccess(final DocumentSnapshot tripDocumentSnapshot) {
+                                tripDocumentReference
+                                        .collection("deviations")
+                                        .get()
 
-                                    textView.setText(setText);
-                                    loadTrip(documentSnapshot.getData());
-                                }
+                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onSuccess(QuerySnapshot deviationQueryDocumentSnapshots) {
+                                                ArrayList<DocumentSnapshot> deviations = new ArrayList<>();
+
+                                                for (DocumentSnapshot deviationDocumentSnapshot : deviationQueryDocumentSnapshots) {
+                                                    deviations.add(deviationDocumentSnapshot);
+                                                }
+
+                                                if (tripDocumentSnapshot.exists()) {
+                                                    String setText = "";
+                                                    if (tripDocumentSnapshot.contains("by")) {
+                                                        setText += "Trip by: " + String.valueOf(tripDocumentSnapshot.get("by"))
+                                                                + "\n\n";
+                                                    }
+                                                    setText += "Trip started at " +
+                                                            simpleDateFormat.format(new Date(Long.parseLong(String.valueOf(tripDocumentSnapshot.get("startTime")))))
+                                                            + "\n" +
+                                                            "Trip ended at " +
+                                                            simpleDateFormat.format(new Date(Long.parseLong(String.valueOf(tripDocumentSnapshot.get("endTime")))));
+                                                    if (tripDocumentSnapshot.contains("chainage")) {
+                                                        setText += "\n" +
+                                                                "Chainage: " +
+                                                                tripDocumentSnapshot.get("chainage");
+                                                    }
+
+                                                    textView.setText(setText);
+                                                    loadTrip(tripDocumentSnapshot.getData(), deviations);
+                                                }
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e(TAG, "onFailure: ", e);
+                                            }
+                                        });
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -103,7 +125,7 @@ public class TripViewActivity extends AppCompatActivity {
         });
     }
 
-    private void loadTrip(Map<String, Object> data) {
+    private void loadTrip(Map<String, Object> data, ArrayList<DocumentSnapshot> deviations) {
         LatLngBounds.Builder cameraBounds = new LatLngBounds.Builder();
 
         ArrayList<HashMap<String, Object>> locations = (ArrayList<HashMap<String, Object>>) data.get("locations");
@@ -129,11 +151,26 @@ public class TripViewActivity extends AppCompatActivity {
                 Double.parseDouble(String.valueOf(locations.get(locations.size() - 1).get("longitude")))
         )));
 
-        if (data.containsKey("deviations")) {
-            ArrayList<HashMap<String, Object>> deviationHashMaps = (ArrayList<HashMap<String, Object>>) data.get("deviations");
-            for (HashMap<String, Object> deviationHashMap : deviationHashMaps) {
-                Date date = new Date(Long.parseLong(String.valueOf(deviationHashMap.get("reportTime"))));
-                HashMap<String, Object> deviationLocation = (HashMap<String, Object>) deviationHashMap.get("reportLocation");
+        if (deviations.size() != 0) {
+//            ArrayList<HashMap<String, Object>> deviationHashMaps = (ArrayList<HashMap<String, Object>>) data.get("deviations");
+//            for (HashMap<String, Object> deviationHashMap : deviationHashMaps) {
+//                Date date = new Date(Long.parseLong(String.valueOf(deviationHashMap.get("reportTime"))));
+//                HashMap<String, Object> deviationLocation = (HashMap<String, Object>) deviationHashMap.get("reportLocation");
+//
+//                String title = "Deviated at " + simpleDateFormat.format(date);
+//                mMap.addMarker(new MarkerOptions().title(title).position(new LatLng(
+//                        Double.parseDouble(String.valueOf(deviationLocation.get("latitude"))),
+//                        Double.parseDouble(String.valueOf(deviationLocation.get("longitude")))
+//                )).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+//                cameraBounds.include(new LatLng(
+//                        Double.parseDouble(String.valueOf(deviationLocation.get("latitude"))),
+//                        Double.parseDouble(String.valueOf(deviationLocation.get("longitude")))
+//                ));
+//            }
+
+            for (DocumentSnapshot deviationDocumentSnapshot : deviations) {
+                Date date = new Date(Long.parseLong(String.valueOf(deviationDocumentSnapshot.get("reportTime"))));
+                HashMap<String, Object> deviationLocation = (HashMap<String, Object>) deviationDocumentSnapshot.get("reportLocation");
 
                 String title = "Deviated at " + simpleDateFormat.format(date);
                 mMap.addMarker(new MarkerOptions().title(title).position(new LatLng(

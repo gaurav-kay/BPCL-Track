@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class MainActivity extends AppCompatActivity {
     // do auth and send to maps for workers and send to view notifs for officers
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean isRMPWorker(FirebaseUser currentUser) {
+    protected static boolean isRMPWorker(FirebaseUser currentUser) {
         // todo: enhance
 
         return currentUser.getEmail().startsWith("w");

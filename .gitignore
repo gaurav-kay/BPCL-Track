@@ -22,3 +22,6 @@ scripts/.env
 scripts/credentials.json
 scripts/*.csv
 scripts/db.py
+
+# Functions
+.firebaserc
