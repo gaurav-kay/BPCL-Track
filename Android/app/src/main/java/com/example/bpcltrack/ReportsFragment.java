@@ -122,7 +122,7 @@ public class ReportsFragment extends Fragment {
                     googleMap.getUiSettings().setMapToolbarEnabled(false);
                     googleMap.getUiSettings().setMyLocationButtonEnabled(false);
                     googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
                 }
             });
 

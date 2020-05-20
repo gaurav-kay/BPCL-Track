@@ -184,7 +184,7 @@ public class TripViewActivity extends AppCompatActivity {
             }
         }
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(cameraBounds.build(), 150));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(cameraBounds.build(), 150));
     }
 
     private void loadPipelines() {

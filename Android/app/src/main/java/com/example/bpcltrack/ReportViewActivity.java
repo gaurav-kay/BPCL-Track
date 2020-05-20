@@ -97,7 +97,7 @@ public class ReportViewActivity extends AppCompatActivity {
                 double longitude = Double.parseDouble(String.valueOf(((HashMap) report.get("reportLocation")).get("longitude")));
                 String reportType = String.valueOf(report.get("reportType"));
                 mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(reportType));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 13F));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 13F));
                 mMap.getUiSettings().setMapToolbarEnabled(false);
                 loadPipelines();
             }

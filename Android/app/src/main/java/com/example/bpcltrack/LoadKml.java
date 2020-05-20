@@ -83,7 +83,7 @@ public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
         if (isMapsActivity) {
             ((MapsActivity) context).pipelineLatLngs = (ArrayList<LatLng>) polylineOptions.getPoints();
             ((MapsActivity) context).mMap.addPolyline(polylineOptions);
-            ((MapsActivity) context).mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(this.cameraBounds.build(), 150));
+            ((MapsActivity) context).mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(this.cameraBounds.build(), 150));
             ((MapsActivity) context).progressBar.setVisibility(View.INVISIBLE);
         } else if (isReportViewActivity) {
             ((ReportViewActivity) context).mMap.addPolyline(polylineOptions);

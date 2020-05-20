@@ -243,7 +243,7 @@ public class CurrentLocationsFragment extends Fragment {
             this.googleMap.addMarker(startMarkerOptions);
             this.googleMap.addMarker(currentMarkerOptions);
             this.googleMap.addPolyline(polylineOptions);
-            this.googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(cameraBounds.build(), 0));
+            this.googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(cameraBounds.build(), 0));
         }
     }
 }
