@@ -1,6 +1,6 @@
 package com.example.bpcltrack;
 
-import android.app.Notification
+import android.app.Notification;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
