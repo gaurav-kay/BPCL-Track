@@ -14,14 +14,14 @@ Android/.externalNativeBuild
 Android/.cxx
 
 # Android
-Android/app/src/main/res/raw/pipelines.kml
-Android/app/src/main/res/raw/pipelines_csv.csv
+Android/app/src/main/res/raw/
 
 # Python Scripts
 scripts/.env
 scripts/credentials.json
 scripts/*.csv
 scripts/db.py
+scripts/MeKml
 
 # Functions
 .firebaserc

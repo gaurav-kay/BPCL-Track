@@ -17,7 +17,11 @@ async function deviationNotifier(snapshot, context) {
             token: officerDoc.data().token
       }
 
-      return admin.messaging().send(data)
+      console.log(workerDoc.data(), officerDoc.data(), data)
+
+      return admin.messaging().send(data).catch((reason) => {
+            console.log(reason)
+      })
 }
 
 exports.deviationNotifier = functions.firestore

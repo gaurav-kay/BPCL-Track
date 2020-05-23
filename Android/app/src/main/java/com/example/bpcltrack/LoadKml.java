@@ -1,12 +1,9 @@
 package com.example.bpcltrack;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -20,7 +17,6 @@ import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
     private static final String TAG = "TAG";
@@ -28,31 +24,21 @@ public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
     private WeakReference<Context> weakReference;
     private boolean isMapsActivity, isReportViewActivity, isTripViewActivity;
     private LatLngBounds.Builder cameraBounds = new LatLngBounds.Builder();
+    private InputStream inputStream;
+    private int color;
 
-    public LoadKml(Context context, boolean isMapsActivity, boolean isReportViewActivity, boolean isTripViewActivity) {
-//        if (reportViewActivity == null) {
-//            this.mapsActivityWeakReference = new WeakReference<>(mapsActivity);
-//        } else {
-//            this.reportViewActivityWeakReference = new WeakReference<>(reportViewActivity);
-//        }
+    public LoadKml(Context context, boolean isMapsActivity, boolean isReportViewActivity, boolean isTripViewActivity, int resourceId, int color) {
         this.weakReference = new WeakReference<>(context);
         this.isMapsActivity = isMapsActivity;
         this.isReportViewActivity = isReportViewActivity;
         this.isTripViewActivity = isTripViewActivity;
+        this.inputStream = weakReference.get().getResources().openRawResource(resourceId);
+        this.color = color;
     }
 
     @Override
     protected PolylineOptions doInBackground(Void... voids) {
-        PolylineOptions polylineOptions = new PolylineOptions().color(Color.RED);
-
-        InputStream inputStream = weakReference.get().getResources().openRawResource(R.raw.pipelines_csv);
-//        if (reportViewActivityWeakReference == null) {
-//            MapsActivity activity = (MapsActivity) mapsActivityWeakReference.get();
-//            inputStream = activity.getResources().openRawResource(R.raw.pipelines_csv);
-//        } else {
-//            ReportViewActivity activity = (ReportViewActivity) reportViewActivityWeakReference.get();
-//            inputStream = activity.getResources().openRawResource(R.raw.pipelines_csv);
-//        }
+        PolylineOptions polylineOptions = new PolylineOptions().color(color);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
         String line;

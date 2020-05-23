@@ -3,6 +3,7 @@ package com.example.bpcltrack;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -187,7 +188,7 @@ public class TripViewActivity extends AppCompatActivity {
     }
 
     private void loadPipelines() {
-        LoadKml loadKml = new LoadKml(this, false, false, true);
+        LoadKml loadKml = new LoadKml(this, false, false, true, R.raw.kota_malrana, Color.RED);
         loadKml.execute();
     }
 }

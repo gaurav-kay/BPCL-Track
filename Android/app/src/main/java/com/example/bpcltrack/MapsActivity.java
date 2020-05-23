@@ -2,6 +2,7 @@ package com.example.bpcltrack;
 
 import android.Manifest;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,9 +11,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -34,6 +37,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -50,6 +54,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MapsActivity extends FragmentActivity {
 
@@ -71,6 +76,7 @@ public class MapsActivity extends FragmentActivity {
     private FloatingActionButton startStopTripFab, alertFab, takeMeasurementFab, signOutFab;
     private SupportMapFragment mapFragment;
     private Spinner chainageSpinner;
+    private TextView mapTextView;
 
     private LocationRequest locationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -96,6 +102,7 @@ public class MapsActivity extends FragmentActivity {
         mAuth = FirebaseAuth.getInstance();
 
         progressBar = findViewById(R.id.progress_bar);
+        mapTextView = findViewById(R.id.pipeline_map_text_view);
         chainageSpinner = findViewById(R.id.chainage_spinner);
         startStopTripFab = findViewById(R.id.start_stop_trip_fab);
         takeMeasurementFab = findViewById(R.id.take_measurement_fab);
@@ -107,6 +114,7 @@ public class MapsActivity extends FragmentActivity {
         startStopTripFab.setVisibility(View.GONE);
         alertFab.setVisibility(View.GONE);
         chainageSpinner.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
 
         Dexter.withContext(this)
                 .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -122,8 +130,7 @@ public class MapsActivity extends FragmentActivity {
                                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
                                 // load pipelines
-                                LoadKml loadKml = new LoadKml(MapsActivity.this, true, false, false);
-                                loadKml.execute();
+                                loadPipelines();
                             }
                         });
 
@@ -230,6 +237,76 @@ public class MapsActivity extends FragmentActivity {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         chainageSpinner.setAdapter(spinnerAdapter);
 
+    }
+
+    private void loadPipelines() {
+        db.collection("rmpWorkers")
+                .document(mAuth.getCurrentUser().getUid())
+                .get()
+
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        LoadKml loadKml;
+
+                        String map = String.valueOf(documentSnapshot.get("map"));
+                        mapTextView.setText(map);
+                        if (map.equals("Kota-Malrana")) {
+                            loadKml = new LoadKml(
+                                    MapsActivity.this,
+                                    true,
+                                    false,
+                                    false,
+                                    R.raw.kota_malrana,
+                                    Color.RED
+                            );
+                        } else if (map.equals("Bina IP1")) {
+                            loadKml = new LoadKml(
+                                    MapsActivity.this,
+                                    true,
+                                    false,
+                                    false,
+                                    R.raw.bina_ip1,
+                                    Color.YELLOW
+                            );
+                        } else if (map.equals("JIPS")) {
+                            loadKml = new LoadKml(
+                                    MapsActivity.this,
+                                    true,
+                                    false,
+                                    false,
+                                    R.raw.jips,
+                                    Color.MAGENTA
+                            );
+                        } else if (map.equals("Kota IP1")) {
+                            loadKml = new LoadKml(
+                                    MapsActivity.this,
+                                    true,
+                                    false,
+                                    false,
+                                    R.raw.ip1_kota,
+                                    Color.GREEN
+                            );
+                        } else {
+                            loadKml = new LoadKml(
+                                    MapsActivity.this,
+                                    true,
+                                    false,
+                                    false,
+                                    R.raw.kota_malrana,
+                                    Color.RED
+                            );
+                        }
+                        loadKml.execute();
+                        progressBar.setVisibility(View.GONE);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "onFailure: ", e);
+                    }
+                });
     }
 
     private LocationCallback locationCallback = new LocationCallback() {

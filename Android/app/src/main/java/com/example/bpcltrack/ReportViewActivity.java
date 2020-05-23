@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -146,7 +147,7 @@ public class ReportViewActivity extends AppCompatActivity {
     }
 
     private void loadPipelines() {
-        LoadKml loadKml = new LoadKml(this, false, true, false);
+        LoadKml loadKml = new LoadKml(this, false, true, false, R.raw.kota_malrana, Color.RED);
         loadKml.execute();
     }
 
