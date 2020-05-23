@@ -28,28 +28,76 @@
             android:layout_marginBottom="10dp"
             android:textSize="15sp" />
 
-        <fragment
-            android:id="@+id/report_view_map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_margin="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="500dp" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="500dp"
+            android:layout_margin="10dp">
+
+            <fragment
+                android:id="@+id/report_view_map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_height="500dp"/>
+
+            <TextView
+                android:id="@+id/exact_location_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10dp"
+                android:text="@string/app_name"
+                android:background="#FFF"
+                android:alpha="0.8"
+                android:padding="5dp" />
+        </RelativeLayout>
 
         <TextView
-            android:id="@+id/report_report_type_text_view"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/StaticTextViewThemeRecyclerView"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="0dp"
+            android:text="@string/report_type_static"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/report_report_type_text_view"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:textColor="#000"
             android:layout_height="wrap_content"
             style="@style/StaticTextViewTheme" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/StaticTextViewThemeRecyclerView"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="0dp"
+            android:text="@string/priority_static"
+            android:textSize="12sp" />
         <TextView
             android:id="@+id/report_report_priority_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="#000"
             style="@style/StaticTextViewTheme" />
 
         <TextView
-            android:id="@+id/report_description_text_view"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/StaticTextViewThemeRecyclerView"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="0dp"
+            android:text="@string/description"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/report_description_text_view"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:textColor="#000"
             android:layout_height="wrap_content"
             style="@style/StaticTextViewTheme" />
 

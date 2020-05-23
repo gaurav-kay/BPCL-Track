@@ -1,37 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center"
     android:orientation="vertical"
-    android:layout_margin="20dp">
+    app:cardBackgroundColor="@color/colorCardBackground"
+    android:layout_margin="5dp">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/picture_image_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleType="fitXY"
-            android:layout_alignParentTop="true"
-            android:visibility="invisible"
-            android:adjustViewBounds="true" />
-
-        <ProgressBar
-            android:id="@+id/image_loading_progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            android:layout_centerInParent="true" />
-
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/picture_text_view"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/StaticTextViewTheme" />
+        android:orientation="vertical"
+        android:layout_margin="5dp"
+        android:gravity="center">
 
-</LinearLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/picture_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                android:layout_alignParentTop="true"
+                android:visibility="invisible"
+                android:adjustViewBounds="true" />
+
+            <ProgressBar
+                android:id="@+id/image_loading_progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_centerInParent="true" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/StaticTextViewThemeRecyclerView"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="0dp"
+            android:text="@string/image_description"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/picture_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textColor="#000"
+            android:layout_marginTop="5dp"
+            style="@style/StaticTextViewTheme" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

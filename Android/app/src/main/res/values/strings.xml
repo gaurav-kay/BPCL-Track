@@ -36,4 +36,5 @@
     <string name="by">By</string>
     <string name="description">Description</string>
     <string name="log_out">Log Out</string>
+    <string name="image_description">Image Description</string>
 </resources>

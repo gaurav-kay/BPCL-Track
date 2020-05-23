@@ -48,7 +48,7 @@ public class ReportViewActivity extends AppCompatActivity {
 
     private SupportMapFragment mapFragment;
     private RecyclerView recyclerView;
-    private TextView reportHeadingTextView, reportSubHeadingTextView, reportTypeTextView, reportPriorityTextView, reportDescriptionTextView;
+    private TextView reportHeadingTextView, reportSubHeadingTextView, reportTypeTextView, reportPriorityTextView, reportDescriptionTextView, exactLocationTextView;
     private Button acknowledgeButton;
     private ProgressBar progressBar;
 
@@ -67,6 +67,7 @@ public class ReportViewActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.images_recycler_view);
         reportHeadingTextView = findViewById(R.id.report_main_heading_text_view);
         reportSubHeadingTextView = findViewById(R.id.report_main_subheading_text_view);
+        exactLocationTextView = findViewById(R.id.exact_location_text_view);
         reportTypeTextView = findViewById(R.id.report_report_type_text_view);  // same heading
         reportPriorityTextView = findViewById(R.id.report_report_priority_text_view);
         reportDescriptionTextView = findViewById(R.id.report_description_text_view);
@@ -74,17 +75,20 @@ public class ReportViewActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.updating_progress_bar);
 
         // setting texts of text views
-        String setText = "Report by " + report.get("by");
+        String setText = "At: " + ((HashMap) report.get("reportLocation")).get("latitude") + ", " + ((HashMap) report.get("reportLocation")).get("longitude");
+        exactLocationTextView.setText(setText);
+
+        setText = "Report by " + report.get("by");
         reportHeadingTextView.setText(setText);
 
         setText = "Report at " +
                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(new Date(Long.parseLong(String.valueOf(report.get("reportTime")))));
         reportSubHeadingTextView.setText(setText);
 
-        setText = "Report Type: " + report.get("reportType");
+        setText = String.valueOf(report.get("reportType"));
         reportTypeTextView.setText(setText);
 
-        setText = "Priority: " + report.get("priority");
+        setText = String.valueOf(report.get("priority"));
         reportPriorityTextView.setText(setText);
 
         setText = String.valueOf(report.get("description"));
