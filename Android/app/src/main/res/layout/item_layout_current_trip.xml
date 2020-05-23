@@ -3,10 +3,12 @@
     xmlns:map="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:elevation="5dp"
-    android:layout_margin="5dp"
+    android:layout_margin="10dp"
     map:cardCornerRadius="5dp"
-    android:layout_height="wrap_content">
+    map:cardBackgroundColor="@color/colorCardBackground"
+    android:hapticFeedbackEnabled="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,9 +16,11 @@
         android:orientation="vertical">
 
         <TextView
+            android:layout_margin="5dp"
             android:id="@+id/current_trip_user_text_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="#000" />
 
         <com.google.android.gms.maps.MapView
             android:id="@+id/current_trip_map_view"

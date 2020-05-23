@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity" >
+    android:background="@drawable/gradient_background"
+    tools:context=".MainActivity">
 
     <LinearLayout
         android:id="@+id/main_activity_layout_group"
@@ -25,6 +26,24 @@
             style="@style/StaticTextViewTheme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+        <RadioGroup
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/rou_officer"
+                android:layout_margin="10dp" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/worker"
+                android:layout_margin="10dp" />
+        </RadioGroup>
 
         <EditText
             android:id="@+id/email_edit_text"
@@ -50,11 +69,11 @@
             android:id="@+id/sign_in_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/sign_in_button_hint"
+            android:textColor="#000"
+            android:text="@string/sign_in_button_hint"
             android:drawableEnd="@drawable/ic_person_black_24dp"
             android:drawablePadding="10dp"
             android:layout_margin="20dp"
-            android:textColor="#000"
             android:layout_weight="1"
             android:textSize="20sp" />
     </LinearLayout>

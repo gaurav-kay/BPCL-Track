@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
     tools:context=".ReportViewActivity">
 
     <LinearLayout
@@ -15,7 +16,7 @@
         <TextView
             android:id="@+id/report_main_heading_text_view"
             android:layout_width="wrap_content"
-            android:textSize="32sp"
+            android:textSize="25sp"
             android:textColor="#000"
             style="@style/StaticTextViewTheme"
             android:layout_height="wrap_content" />

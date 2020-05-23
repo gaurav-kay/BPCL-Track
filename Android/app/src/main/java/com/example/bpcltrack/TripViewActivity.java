@@ -38,7 +38,7 @@ public class TripViewActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     protected GoogleMap mMap;
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
 
     private SupportMapFragment mapFragment;
     private TextView headingTextView, subHeadingTextView;
@@ -85,8 +85,7 @@ public class TripViewActivity extends AppCompatActivity {
                                                 if (tripDocumentSnapshot.exists()) {
                                                     String setText = "";
                                                     if (tripDocumentSnapshot.contains("by")) {
-                                                        setText += "Trip by: " + String.valueOf(tripDocumentSnapshot.get("by"))
-                                                                + "\n\n";
+                                                        setText += "Trip by: " + String.valueOf(tripDocumentSnapshot.get("by"));
                                                     }
                                                     headingTextView.setText(setText);
 

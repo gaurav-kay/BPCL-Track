@@ -116,6 +116,7 @@ public class ReportsFragment extends Fragment {
             final double longitude = (double) ((HashMap) reportSnapshots.get(position).getData().get("reportLocation")).get("longitude");
 
             holder.mapView.onCreate(null);
+            holder.mapView.setClickable(false);
             holder.mapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {

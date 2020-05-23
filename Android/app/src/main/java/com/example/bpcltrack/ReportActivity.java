@@ -104,7 +104,7 @@ public class ReportActivity extends AppCompatActivity {
         // picker
         priorityPicker.setMinValue(0);
         priorityPicker.setMaxValue(PRIORITY_LEVELS.length - 1);
-        priorityPicker.setValue(0);
+        priorityPicker.setValue(1);
         priorityPicker.setWrapSelectorWheel(false);
         priorityPicker.setDisplayedValues(PRIORITY_LEVELS);
 

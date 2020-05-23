@@ -31,4 +31,8 @@
     <string name="enter_chainage">Enter Chainage</string>
     <string name="enter_mg_zn_anode_value">Enter Mg/Zn Anode Value</string>
     <string name="welcome_to_bpcl_pipelines">Welcome to BPCL Pipelines</string>
+    <string name="worker">RMP Worker</string>
+    <string name="rou_officer">ROU Officer</string>
+    <string name="by">By</string>
+    <string name="description">Description</string>
 </resources>

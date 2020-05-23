@@ -155,6 +155,7 @@ public class CurrentLocationsFragment extends Fragment {
             }
 
             holder.mapView.onCreate(null);
+            holder.mapView.setClickable(false);
             holder.mapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
