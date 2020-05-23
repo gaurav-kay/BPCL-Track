@@ -46,11 +46,7 @@ public class FCMService extends FirebaseMessagingService {
                     .build();
 
             Log.d(TAG, "onMessageReceived: " + map);
-            Log.wtf("FUCK", "onMessageReceived: " + map.get("by"));
-            Log.wtf("FUCK", "onMessageReceived: " + map.get("reportTime"));
-            Log.wtf("FUCK", "onMessageReceived: " + map.get("id"));
             int id = Integer.parseInt(map.get("id"));
-            Log.wtf("FUCK", ":" + id);
             notificationManager.notify(id, notification);
         }
     }

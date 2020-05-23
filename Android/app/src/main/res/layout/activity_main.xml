@@ -12,7 +12,19 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:orientation="vertical" >
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_bharat_petroleum_logo" />
+
+        <TextView
+            android:layout_weight="1"
+            android:text="@string/common_signin_button_text"
+            style="@style/StaticTextViewTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <EditText
             android:id="@+id/email_edit_text"
@@ -39,7 +51,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/sign_in_button_hint"
+            android:drawableEnd="@drawable/ic_person_black_24dp"
+            android:drawablePadding="10dp"
             android:layout_margin="20dp"
+            android:textColor="#000"
             android:layout_weight="1"
             android:textSize="20sp" />
     </LinearLayout>

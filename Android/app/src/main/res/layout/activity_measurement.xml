@@ -14,14 +14,19 @@
         android:layout_margin="10dp"
         android:scrollbars="vertical">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_bharat_petroleum_logo" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/take_measurement"
             android:textColor="#000"
             android:textSize="30sp"
-            android:layout_marginBottom="30dp"
-            android:layout_margin="20dp" />
+            android:layout_margin="10dp" />
 
         <View
             android:layout_width="match_parent"
@@ -30,6 +35,7 @@
             android:background="#777" />
 
         <TextView
+            android:layout_marginTop="10dp"
             style="@style/StaticTextViewTheme"
             android:text="@string/enter_chainage" />
         <EditText
@@ -188,7 +194,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:text="@string/attach_picture" />
+            android:text="@string/attach_picture"
+            android:drawableEnd="@drawable/ic_camera_black_24dp"
+            android:drawablePadding="10dp" />
 
         <View
             android:layout_width="match_parent"
@@ -201,6 +209,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/getting_location"
+            android:drawablePadding="10dp"
             android:enabled="false"
             android:layout_margin="20dp"
             android:textSize="20sp"

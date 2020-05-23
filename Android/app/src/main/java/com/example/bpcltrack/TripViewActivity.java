@@ -4,9 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,7 +18,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -44,7 +41,7 @@ public class TripViewActivity extends AppCompatActivity {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
     private SupportMapFragment mapFragment;
-    private TextView textView;
+    private TextView headingTextView, subHeadingTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +52,8 @@ public class TripViewActivity extends AppCompatActivity {
         Log.wtf(TAG, "onCreate: " + tripDocumentReference.getId());
 
         mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.trip_map);
-        textView = findViewById(R.id.trip_trip_summary);
+        headingTextView = findViewById(R.id.trip_trip_summary);
+        subHeadingTextView = findViewById(R.id.trip_trip_sub_summary);
 
 //        ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
 //        DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -90,7 +88,9 @@ public class TripViewActivity extends AppCompatActivity {
                                                         setText += "Trip by: " + String.valueOf(tripDocumentSnapshot.get("by"))
                                                                 + "\n\n";
                                                     }
-                                                    setText += "Trip started at " +
+                                                    headingTextView.setText(setText);
+
+                                                    setText = "Trip started at " +
                                                             simpleDateFormat.format(new Date(Long.parseLong(String.valueOf(tripDocumentSnapshot.get("startTime")))))
                                                             + "\n" +
                                                             "Trip ended at " +
@@ -100,8 +100,8 @@ public class TripViewActivity extends AppCompatActivity {
                                                                 "Chainage: " +
                                                                 tripDocumentSnapshot.get("chainage");
                                                     }
+                                                    subHeadingTextView.setText(setText);
 
-                                                    textView.setText(setText);
                                                     loadTrip(tripDocumentSnapshot.getData(), deviations);
                                                 }
                                             }

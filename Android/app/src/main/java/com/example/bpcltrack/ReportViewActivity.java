@@ -48,7 +48,7 @@ public class ReportViewActivity extends AppCompatActivity {
 
     private SupportMapFragment mapFragment;
     private RecyclerView recyclerView;
-    private TextView reportHeadingTextView, reportTypeTextView, reportPriorityTextView, reportDescriptionTextView;
+    private TextView reportHeadingTextView, reportSubHeadingTextView, reportTypeTextView, reportPriorityTextView, reportDescriptionTextView;
     private Button acknowledgeButton;
     private ProgressBar progressBar;
 
@@ -66,6 +66,7 @@ public class ReportViewActivity extends AppCompatActivity {
         mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.report_view_map);
         recyclerView = findViewById(R.id.images_recycler_view);
         reportHeadingTextView = findViewById(R.id.report_main_heading_text_view);
+        reportSubHeadingTextView = findViewById(R.id.report_main_subheading_text_view);
         reportTypeTextView = findViewById(R.id.report_report_type_text_view);  // same heading
         reportPriorityTextView = findViewById(R.id.report_report_priority_text_view);
         reportDescriptionTextView = findViewById(R.id.report_description_text_view);
@@ -73,9 +74,12 @@ public class ReportViewActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.updating_progress_bar);
 
         // setting texts of text views
-        String setText = "Report by " + report.get("by") + " at " +
-                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(new Date(Long.parseLong(String.valueOf(report.get("reportTime")))));
+        String setText = "Report by " + report.get("by");
         reportHeadingTextView.setText(setText);
+
+        setText = "Report at " +
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(new Date(Long.parseLong(String.valueOf(report.get("reportTime")))));
+        reportSubHeadingTextView.setText(setText);
 
         setText = "Report Type: " + report.get("reportType");
         reportTypeTextView.setText(setText);

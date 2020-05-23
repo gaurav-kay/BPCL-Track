@@ -18,14 +18,19 @@
         android:layout_margin="10dp"
         android:scrollbars="vertical">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_bharat_petroleum_logo" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/report_incident"
             android:textColor="#000"
             android:textSize="30sp"
-            android:layout_marginBottom="30dp"
-            android:layout_margin="20dp" />
+            android:layout_margin="10dp"/>
 
         <View
             android:layout_width="match_parent"
@@ -34,6 +39,7 @@
             android:background="#777" />
 
         <TextView
+            android:layout_marginTop="10dp"
             style="@style/StaticTextViewTheme"
             android:text="@string/report_type_static" />
         <Spinner
@@ -70,6 +76,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:layout_marginBottom="10dp"
+            android:drawableEnd="@drawable/ic_camera_black_24dp"
+            android:drawablePadding="5dp"
             android:text="@string/attach_picture"
             android:textColor="#000" />
 
@@ -89,6 +97,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/stop_button_text"
+            android:drawableEnd="@drawable/ic_done_black_24dp"
+            android:drawablePadding="10dp"
             android:layout_margin="20dp"
             android:textSize="20sp"
             android:textColor="#000" />

@@ -251,15 +251,15 @@ public class MapsActivity extends FragmentActivity {
     };
 
     private void updateDB(ArrayList<Location> currentLocations) {
-        HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("locations", currentLocations);
+//        HashMap<String, Object> updateMap = new HashMap<>();
+        tripDetails.put("locations", currentLocations);
 
         db.collection("rmpWorkers")
                 .document(mAuth.getCurrentUser().getUid())
                 .collection("trips")
                 .document(simpleDateFormat.format(new Date((long) tripDetails.get("startTime"))))
 
-                .set(updateMap, SetOptions.merge())
+                .set(tripDetails, SetOptions.merge())
 
                 .addOnFailureListener(new OnFailureListener() {
                     @Override

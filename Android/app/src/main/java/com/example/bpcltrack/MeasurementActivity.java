@@ -3,6 +3,7 @@ package com.example.bpcltrack;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
@@ -360,6 +361,7 @@ public class MeasurementActivity extends AppCompatActivity {
     private void gotLocation() {
         submitMeasurementButton.setText(getResources().getString(R.string.stop_button_text));
         submitMeasurementButton.setEnabled(true);
+        submitMeasurementButton.setCompoundDrawables(null, null, ContextCompat.getDrawable(this, R.drawable.ic_done_black_24dp), null);
     }
 
     private LocationCallback locationCallback = new LocationCallback() {

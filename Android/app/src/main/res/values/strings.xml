@@ -19,7 +19,7 @@
     <string name="enter_chainage_link">Enter Chainage link…</string>
     <string name="measure">MEASURE</string>
     <string name="enter_tlp_number">Enter TLP Number</string>
-    <string name="take_measurement">Take Measurement</string>
+    <string name="take_measurement">TLP Monitoring App</string>
     <string name="enter_tlp_type">Enter TLP Type</string>
     <string name="enter_psp_value">Enter PSP Value</string>
     <string name="enter_ac_value">Enter AC Value</string>
@@ -30,4 +30,5 @@
     <string name="tlp_prefix_edit_text">TLP - </string>
     <string name="enter_chainage">Enter Chainage</string>
     <string name="enter_mg_zn_anode_value">Enter Mg/Zn Anode Value</string>
+    <string name="welcome_to_bpcl_pipelines">Welcome to BPCL Pipelines</string>
 </resources>
