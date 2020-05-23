@@ -1,7 +1,10 @@
 package com.example.bpcltrack;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +33,7 @@ public class OfficerActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
     private TabLayout tabLayout;
+    private TextView logOutTextView;
 
     private final Fragment[] FRAGMENTS = new Fragment[]{new ReportsFragment(), new CurrentLocationsFragment(), new AllTripsFragment()};
     private final String[] TITLES = new String[]{"Reports", "Current Locations", "All Trips"};
@@ -38,6 +42,8 @@ public class OfficerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_officer);
+
+        logOutTextView = findViewById(R.id.log_out_text_view);
 
         // set up viewpager
         sectionsPageAdapter = new SectionsPageAdapter(
@@ -52,6 +58,14 @@ public class OfficerActivity extends AppCompatActivity {
 
         tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        logOutTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAuth.signOut();
+                startActivity(new Intent(OfficerActivity.this, MainActivity.class));
+            }
+        });
     }
 
     private class SectionsPageAdapter extends FragmentStatePagerAdapter {
@@ -83,6 +97,26 @@ public class OfficerActivity extends AppCompatActivity {
             return fragments.length;
         }
     }
+
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater menuInflater = getMenuInflater();
+//        menuInflater.inflate(R.menu.officer_activity_menu, menu);
+//
+//        Log.d(TAG, "onCreateOptionsMenu: YEP");
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        if (item.getItemId() == R.id.log_out_menu_item) {
+//            mAuth.signOut();
+//            startActivity(new Intent(OfficerActivity.this, MainActivity.class));
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     protected void onStart() {
@@ -116,3 +150,5 @@ public class OfficerActivity extends AppCompatActivity {
                 });
     }
 }
+
+// todo: fix menu

@@ -68,7 +68,7 @@ public class MapsActivity extends FragmentActivity {
     private boolean isDeviationReportRecentlyMade = false;
 
     protected ProgressBar progressBar;
-    private FloatingActionButton startStopTripFab, alertFab, takeMeasurementFab;
+    private FloatingActionButton startStopTripFab, alertFab, takeMeasurementFab, signOutFab;
     private SupportMapFragment mapFragment;
     private Spinner chainageSpinner;
 
@@ -99,6 +99,7 @@ public class MapsActivity extends FragmentActivity {
         chainageSpinner = findViewById(R.id.chainage_spinner);
         startStopTripFab = findViewById(R.id.start_stop_trip_fab);
         takeMeasurementFab = findViewById(R.id.take_measurement_fab);
+        signOutFab = findViewById(R.id.log_out_fab);
         alertFab = findViewById(R.id.alert_fab);
         mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
 
@@ -212,6 +213,14 @@ public class MapsActivity extends FragmentActivity {
                 }
 
                 startActivity(intent);
+            }
+        });
+
+        signOutFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAuth.signOut();
+                startActivity(new Intent(MapsActivity.this, MainActivity.class));
             }
         });
 
@@ -431,4 +440,4 @@ public class MapsActivity extends FragmentActivity {
 
 // todo: change distance for location req
 // todo: add fab to view reports
-// todo: delet imagess
+// done: delet imagess

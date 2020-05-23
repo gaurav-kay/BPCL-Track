@@ -21,6 +21,8 @@
         android:textStyle="bold"
         android:gravity="center"
         android:textAlignment="center"
+        android:elevation="5dp"
+        android:background="@null"
         android:text="@string/welcome_to_bpcl_pipelines"
         style="@style/StaticTextViewTheme"
         android:layout_width="wrap_content"
@@ -96,6 +98,16 @@
         app:fab_addButtonColorPressed="@color/colorAccent"
         app:fab_addButtonPlusIconColor="#FFF"
         app:fab_labelStyle="@style/FabLabelStyle">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/log_out_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorNormal="#FFF"
+            app:fab_colorPressed="#FFF"
+            app:fab_size="mini"
+            app:fab_icon="@drawable/ic_person_outline_black_24dp"
+            app:fab_title="@string/log_out" />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/take_measurement_fab"
