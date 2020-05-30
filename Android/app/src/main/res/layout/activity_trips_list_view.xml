@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
+    style="@style/AppTheme.AppBarOverlay"
     tools:context=".TripsListViewActivity">
 
     <ProgressBar
@@ -13,11 +14,23 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 
+    <TextView
+        android:id="@+id/all_trips_trips_static_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="20dp"
+        android:textColor="#000"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:text="@string/trips" />
+
     <ListView
         android:id="@+id/all_trips_view_trips_of_worker_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/all_trips_trips_static_text_view"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

@@ -107,6 +107,11 @@ public class ReportsFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ReportViewHolder holder, final int position) {
+            if (reportSnapshots.get(position).contains("mapName")) {
+                holder.reportMapName.setText(String.valueOf(reportSnapshots.get(position).get("mapName")));
+            } else {
+                holder.reportMapName.setText(MapsActivity.DEFAULT_MAP);
+            }
             holder.reportByTextView.setText(String.valueOf(reportSnapshots.get(position).getData().get("by")));
             holder.reportTypeTextView.setText(String.valueOf(reportSnapshots.get(position).getData().get("reportType")));
             holder.reportPriorityTextView.setText(String.valueOf(reportSnapshots.get(position).getData().get("priority")));
@@ -146,13 +151,14 @@ public class ReportsFragment extends Fragment {
 
             private CardView cardView;
             private MapView mapView;
-            private TextView reportByTextView, reportTypeTextView, reportPriorityTextView, reportDescriptionTextView;
+            private TextView reportMapName, reportByTextView, reportTypeTextView, reportPriorityTextView, reportDescriptionTextView;
 
             public ReportViewHolder(@NonNull View itemView) {
                 super(itemView);
 
                 cardView = itemView.findViewById(R.id.item_card_view);
                 mapView = itemView.findViewById(R.id.report_report_location);
+                reportMapName = itemView.findViewById(R.id.report_map_name_text_view);
                 reportByTextView = itemView.findViewById(R.id.report_report_by_text_view);
                 reportTypeTextView = itemView.findViewById(R.id.report_report_type_text_view);
                 reportPriorityTextView = itemView.findViewById(R.id.report_report_priority_text_view);

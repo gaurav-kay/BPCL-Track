@@ -3,7 +3,6 @@ package com.example.bpcltrack;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -50,23 +49,17 @@ public class TripViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_trip_view);
 
         tripDocumentReference = db.document(String.valueOf(getIntent().getExtras().get("tripDocumentPath")));
-        Log.wtf(TAG, "onCreate: " + tripDocumentReference.getId());
 
         mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.trip_map);
         headingTextView = findViewById(R.id.trip_trip_summary);
         subHeadingTextView = findViewById(R.id.trip_trip_sub_summary);
 
-//        ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
-//        DisplayMetrics displaymetrics = new DisplayMetrics();
-//        this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-//        params.height = (int) (displaymetrics.heightPixels * 0.8);
-//        mapFragment.getView().setLayoutParams(params);
-
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mMap = googleMap;
-                tripDocumentReference.get()
+                tripDocumentReference
+                        .get()
                         .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(final DocumentSnapshot tripDocumentSnapshot) {
@@ -85,6 +78,12 @@ public class TripViewActivity extends AppCompatActivity {
 
                                                 if (tripDocumentSnapshot.exists()) {
                                                     String setText = "";
+                                                    if (tripDocumentSnapshot.contains("mapName")) {
+                                                        setText += tripDocumentSnapshot.get("mapName");
+                                                    } else {
+                                                        setText += MapsActivity.DEFAULT_MAP;
+                                                    }
+                                                    setText += "\n";
                                                     if (tripDocumentSnapshot.contains("by")) {
                                                         setText += "Trip by: " + String.valueOf(tripDocumentSnapshot.get("by"));
                                                     }
@@ -112,6 +111,13 @@ public class TripViewActivity extends AppCompatActivity {
                                                 Log.e(TAG, "onFailure: ", e);
                                             }
                                         });
+                                MapsActivity.loadPipelinesMap(
+                                        String.valueOf(tripDocumentSnapshot.get("mapName")),
+                                        TripViewActivity.this,
+                                        false,
+                                        false,
+                                        true
+                                );
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -120,7 +126,6 @@ public class TripViewActivity extends AppCompatActivity {
                                 Log.e(TAG, "onFailure: ", e);
                             }
                         });
-                loadPipelines();
             }
         });
     }
@@ -185,10 +190,5 @@ public class TripViewActivity extends AppCompatActivity {
         }
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(cameraBounds.build(), 150));
-    }
-
-    private void loadPipelines() {
-        LoadKml loadKml = new LoadKml(this, false, false, true, R.raw.kota_malrana, Color.RED);
-        loadKml.execute();
     }
 }

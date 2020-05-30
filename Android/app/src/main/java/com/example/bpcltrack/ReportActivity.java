@@ -74,6 +74,7 @@ public class ReportActivity extends AppCompatActivity {
     private ArrayList<Uri> photoFileUris;
     private ArrayList<File> photoFiles;
     private ArrayList<Bitmap> photoBitmaps;
+    private String mapName = MapsActivity.DEFAULT_MAP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,7 @@ public class ReportActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         final ArrayList<Location> locations = (ArrayList<Location>) bundle.get("locations");
+        mapName = (String) bundle.get("mapName");
 
         photoFileUris = new ArrayList<>();
         photoFiles = new ArrayList<>();
@@ -159,6 +161,7 @@ public class ReportActivity extends AppCompatActivity {
         report.put("reportType", REPORT_TYPES[spinner.getSelectedItemPosition()]);
         report.put("by", auth.getCurrentUser().getEmail());
         report.put("acknowledged", false);
+        report.put("mapName", mapName);
 
         if (imagesAdapter == null) {
             updateDBWithReport(report);

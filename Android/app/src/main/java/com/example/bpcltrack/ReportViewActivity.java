@@ -26,15 +26,12 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -49,7 +46,7 @@ public class ReportViewActivity extends AppCompatActivity {
 
     private SupportMapFragment mapFragment;
     private RecyclerView recyclerView;
-    private TextView reportHeadingTextView, reportSubHeadingTextView, reportTypeTextView, reportPriorityTextView, reportDescriptionTextView, exactLocationTextView;
+    private TextView reportHeadingTextView, reportSubHeadingTextView, exactLocationTextView, reportMapNameTextView, reportTypeTextView, reportPriorityTextView, reportDescriptionTextView;
     private Button acknowledgeButton;
     private ProgressBar progressBar;
 
@@ -69,7 +66,8 @@ public class ReportViewActivity extends AppCompatActivity {
         reportHeadingTextView = findViewById(R.id.report_main_heading_text_view);
         reportSubHeadingTextView = findViewById(R.id.report_main_subheading_text_view);
         exactLocationTextView = findViewById(R.id.exact_location_text_view);
-        reportTypeTextView = findViewById(R.id.report_report_type_text_view);  // same heading
+        reportMapNameTextView = findViewById(R.id.report_map_name_text_view);
+        reportTypeTextView = findViewById(R.id.report_report_type_text_view);  // same heading (id)
         reportPriorityTextView = findViewById(R.id.report_report_priority_text_view);
         reportDescriptionTextView = findViewById(R.id.report_description_text_view);
         acknowledgeButton = findViewById(R.id.acknowledge_button);
@@ -78,6 +76,13 @@ public class ReportViewActivity extends AppCompatActivity {
         // setting texts of text views
         String setText = "At: " + ((HashMap) report.get("reportLocation")).get("latitude") + ", " + ((HashMap) report.get("reportLocation")).get("longitude");
         exactLocationTextView.setText(setText);
+
+        if (report.containsKey("mapName")) {
+            setText = String.valueOf(report.get("mapName"));
+        } else {
+            setText = MapsActivity.DEFAULT_MAP;
+        }
+        reportMapNameTextView.setText(setText);
 
         setText = "Report by " + report.get("by");
         reportHeadingTextView.setText(setText);
@@ -108,7 +113,13 @@ public class ReportViewActivity extends AppCompatActivity {
                 mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(reportType));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 13F));
                 mMap.getUiSettings().setMapToolbarEnabled(false);
-                loadPipelines();
+                MapsActivity.loadPipelinesMap(
+                        String.valueOf(report.get("mapName")),
+                        ReportViewActivity.this,
+                        false,
+                        true,
+                        false
+                );
             }
         });
 

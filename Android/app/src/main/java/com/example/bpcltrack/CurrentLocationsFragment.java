@@ -150,8 +150,15 @@ public class CurrentLocationsFragment extends Fragment {
             Log.d(TAG, "onBindViewHolder: " + trips.get(position));
 
             if (trips.get(position).containsKey("by")) {  // db inconsistencies todo: fix
-                String setText = String.valueOf(trips.get(position).get("by"));
-                holder.userTextView.setText(setText);
+                StringBuilder setText = new StringBuilder();
+                if (trips.get(position).containsKey("mapName")) {
+                    setText.append(String.valueOf(trips.get(position).get("mapName")));
+                } else {
+                    setText.append(MapsActivity.DEFAULT_MAP);
+                }
+                setText.append(" • ");
+                setText.append(String.valueOf(trips.get(position).get("by")));
+                holder.userTextView.setText(setText.toString());
             }
 
             holder.mapView.onCreate(null);

@@ -63,8 +63,15 @@ public class TripsListViewActivity extends AppCompatActivity {
                         tripNames = new ArrayList<>();
                         for (DocumentSnapshot tripDocumentSnapshot : queryTripDocumentSnapshots) {
                             tripDocumentReferenes.add(tripDocumentSnapshot.getReference());
-                            String name = "Trip at " + tripDocumentSnapshot.getId();
-                            tripNames.add(name);
+//                            String name = "Trip at " + tripDocumentSnapshot.getId();
+                            StringBuilder name = new StringBuilder();
+                            if (tripDocumentSnapshot.contains("mapName")) {
+                                name.append(tripDocumentSnapshot.get("mapName")).append(" ");
+                            } else {
+                                name.append(MapsActivity.DEFAULT_MAP).append(" ");
+                            }
+                            name.append("trip at ").append(tripDocumentSnapshot.getId());
+                            tripNames.add(name.toString());
                         }
 
                         ArrayAdapter adapter = new ArrayAdapter<>(TripsListViewActivity.this, android.R.layout.simple_list_item_1, tripNames);

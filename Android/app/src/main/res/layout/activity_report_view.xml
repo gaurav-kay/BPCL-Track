@@ -59,6 +59,22 @@
             style="@style/StaticTextViewThemeRecyclerView"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="0dp"
+            android:text="@string/pipeline"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/report_map_name_text_view"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:textColor="#000"
+            android:layout_height="wrap_content"
+            style="@style/StaticTextViewTheme" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/StaticTextViewThemeRecyclerView"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="0dp"
             android:text="@string/report_type_static"
             android:textSize="12sp" />
         <TextView

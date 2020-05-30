@@ -37,4 +37,6 @@
     <string name="description">Description</string>
     <string name="log_out">Log Out</string>
     <string name="image_description">Image Description</string>
+    <string name="pipeline">Pipeline</string>
+    <string name="trips">Trips</string>
 </resources>

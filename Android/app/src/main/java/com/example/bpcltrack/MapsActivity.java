@@ -1,6 +1,7 @@
 package com.example.bpcltrack;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
@@ -15,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -54,7 +54,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class MapsActivity extends FragmentActivity {
 
@@ -63,10 +62,11 @@ public class MapsActivity extends FragmentActivity {
     private static final long FASTEST_UPDATE_INTERVAL = 5000L;
     private static final long UPDATE_INTERVAL = 10000L;
     private static final float DEVIATION_THRESHOLD = 500f;
-    private static final long DEVIATION_REPORT_INTERVAL = 1 * 60 * 1000;
+    private static final long DEVIATION_REPORT_INTERVAL = 5 * 60 * 1000;
     private static final int CHAINAGE_INTERVAL = 10;
     private static final int CHAINAGE_START = 0;
     private static final int CHAINAGE_END = 600;
+    protected static final String DEFAULT_MAP = "Kota-Malrana";
 
     private boolean isTripStarted = false;
     private boolean isLocationReceived = false;
@@ -93,6 +93,7 @@ public class MapsActivity extends FragmentActivity {
     private ArrayList<Location> locations;
     private ArrayList<Polyline> tripPolylines;
     private HashMap<String, Object> tripDetails;
+    private String mapName = DEFAULT_MAP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +144,7 @@ public class MapsActivity extends FragmentActivity {
                         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
                         // make buttons visible ui
-                        startStopTripFab.setVisibility(View.VISIBLE);
+                        startStopTripFab.setVisibility(View.VISIBLE);  // todo: consider putting this inside getMapAsync
                     }
 
                     @Override
@@ -168,6 +169,7 @@ public class MapsActivity extends FragmentActivity {
                     tripDetails.put("startTime", new Date().getTime());
                     tripDetails.put("isOngoing", true);
                     tripDetails.put("by", mAuth.getCurrentUser().getEmail());
+                    tripDetails.put("mapName", mapName);
 
                     // ui
                     alertFab.setVisibility(View.VISIBLE);
@@ -206,6 +208,7 @@ public class MapsActivity extends FragmentActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MapsActivity.this, ReportActivity.class);
                 intent.putExtra("locations", locations);
+                intent.putExtra("mapName", mapName);
                 startActivity(intent);
             }
         });
@@ -214,6 +217,7 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MapsActivity.this, MeasurementActivity.class);
+                intent.putExtra("mapName", mapName);
 
                 if (isLocationReceived) {
                     intent.putExtra("location", locations.get(locations.size() - 1));
@@ -247,57 +251,10 @@ public class MapsActivity extends FragmentActivity {
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        LoadKml loadKml;
-
-                        String map = String.valueOf(documentSnapshot.get("map"));
-                        mapTextView.setText(map);
-                        if (map.equals("Kota-Malrana")) {
-                            loadKml = new LoadKml(
-                                    MapsActivity.this,
-                                    true,
-                                    false,
-                                    false,
-                                    R.raw.kota_malrana,
-                                    Color.RED
-                            );
-                        } else if (map.equals("Bina IP1")) {
-                            loadKml = new LoadKml(
-                                    MapsActivity.this,
-                                    true,
-                                    false,
-                                    false,
-                                    R.raw.bina_ip1,
-                                    Color.YELLOW
-                            );
-                        } else if (map.equals("JIPS")) {
-                            loadKml = new LoadKml(
-                                    MapsActivity.this,
-                                    true,
-                                    false,
-                                    false,
-                                    R.raw.jips,
-                                    Color.MAGENTA
-                            );
-                        } else if (map.equals("Kota IP1")) {
-                            loadKml = new LoadKml(
-                                    MapsActivity.this,
-                                    true,
-                                    false,
-                                    false,
-                                    R.raw.ip1_kota,
-                                    Color.GREEN
-                            );
-                        } else {
-                            loadKml = new LoadKml(
-                                    MapsActivity.this,
-                                    true,
-                                    false,
-                                    false,
-                                    R.raw.kota_malrana,
-                                    Color.RED
-                            );
-                        }
-                        loadKml.execute();
+                        String mapName = String.valueOf(documentSnapshot.get("map"));
+                        mapTextView.setText(mapName);
+                        MapsActivity.this.mapName = mapName;
+                        loadPipelinesMap(mapName, MapsActivity.this, true, false, false);
                         progressBar.setVisibility(View.GONE);
                     }
                 })
@@ -307,6 +264,53 @@ public class MapsActivity extends FragmentActivity {
                         Log.e(TAG, "onFailure: ", e);
                     }
                 });
+    }
+
+    protected static void loadPipelinesMap(String mapName, Context context, boolean isMapsActivity, boolean isReportViewActivity, boolean isTripViewActivity) {
+        LoadKml loadKml;
+        switch (mapName) {
+            case "Bina IP1":
+                loadKml = new LoadKml(
+                        context,
+                        isMapsActivity,
+                        isReportViewActivity,
+                        isTripViewActivity,
+                        R.raw.bina_ip1,
+                        Color.YELLOW
+                );
+                break;
+            case "JIPS":
+                loadKml = new LoadKml(
+                        context,
+                        isMapsActivity,
+                        isReportViewActivity,
+                        isTripViewActivity,
+                        R.raw.jips,
+                        Color.MAGENTA
+                );
+                break;
+            case "Kota IP1":
+                loadKml = new LoadKml(
+                        context,
+                        isMapsActivity,
+                        isReportViewActivity,
+                        isTripViewActivity,
+                        R.raw.ip1_kota,
+                        Color.GREEN
+                );
+                break;
+            default:  // Kota-Malrana
+                loadKml = new LoadKml(
+                        context,
+                        isMapsActivity,
+                        isReportViewActivity,
+                        isTripViewActivity,
+                        R.raw.kota_malrana,
+                        Color.RED
+                );
+                break;
+        }
+        loadKml.execute();
     }
 
     private LocationCallback locationCallback = new LocationCallback() {
