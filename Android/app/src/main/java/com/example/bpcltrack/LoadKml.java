@@ -28,6 +28,7 @@ public class LoadKml extends AsyncTask<Void, Void, PolylineOptions> {
     private int color;
 
     public LoadKml(Context context, boolean isMapsActivity, boolean isReportViewActivity, boolean isTripViewActivity, int resourceId, int color) {
+        // todo: load loaded maps to cache or something
         this.weakReference = new WeakReference<>(context);
         this.isMapsActivity = isMapsActivity;
         this.isReportViewActivity = isReportViewActivity;

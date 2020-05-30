@@ -68,7 +68,7 @@
                 android:textSize="20sp"
                 android:textColor="#000"
                 android:layout_height="wrap_content"
-                android:inputType="number" />
+                android:inputType="numberDecimal" />
         </LinearLayout>
 <!--        <Spinner-->
 <!--            android:id="@+id/tlp_number_spinner"-->

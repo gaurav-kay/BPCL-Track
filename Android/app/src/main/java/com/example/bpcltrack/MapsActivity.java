@@ -59,14 +59,27 @@ public class MapsActivity extends FragmentActivity {
 
     private static final String TAG = "TAG";
 
-    private static final long FASTEST_UPDATE_INTERVAL = 5000L;
-    private static final long UPDATE_INTERVAL = 10000L;
-    private static final float DEVIATION_THRESHOLD = 500f;
+    private static final long FASTEST_UPDATE_INTERVAL = 5 * 1000L;
+    private static final long UPDATE_INTERVAL = 10 * 1000L;
+    private static final long MAX_UPDATE_INTERVAL = 30 * 1000L;
+    private static final float DEVIATION_THRESHOLD = 50f;
     private static final long DEVIATION_REPORT_INTERVAL = 5 * 60 * 1000;
     private static final int CHAINAGE_INTERVAL = 10;
-    private static final int CHAINAGE_START = 0;
-    private static final int CHAINAGE_END = 600;
+    private static int CHAINAGE_START = 0;
+    private static int CHAINAGE_END = 600;
+    private static final int CHAINAGE_KOTA_MALRANA_START = 888;
+    private static final int CHAINAGE_KOTA_MALRANA_END = 1028;
+    private static final int CHAINAGE_BINA_START = 0;
+    private static final int CHAINAGE_BINA_END = 260;
+    private static final int CHAINAGE_JIPS_START = 0;
+    private static final int CHAINAGE_JIPS_END = 1500;
+    private static final int CHAINAGE_KOTA_IP1_START = 0;
+    private static final int CHAINAGE_KOTA_IP1_END = 1500;
+
     protected static final String DEFAULT_MAP = "Kota-Malrana";
+    private static final String BINA_IP1 = "Bina IP1";
+    private static final String JIPS = "JIPS";
+    private static final String KOTA_IP1 = "Kota IP1";
 
     private boolean isTripStarted = false;
     private boolean isLocationReceived = false;
@@ -140,6 +153,7 @@ public class MapsActivity extends FragmentActivity {
 
                         locationRequest = new LocationRequest();
                         locationRequest.setInterval(UPDATE_INTERVAL);
+                        locationRequest.setMaxWaitTime(MAX_UPDATE_INTERVAL);
                         locationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL);
                         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
@@ -234,13 +248,6 @@ public class MapsActivity extends FragmentActivity {
                 startActivity(new Intent(MapsActivity.this, MainActivity.class));
             }
         });
-
-        // spinner
-        ArrayList<String> choices = getChainageSpinnerChoices();
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, choices);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        chainageSpinner.setAdapter(spinnerAdapter);
-
     }
 
     private void loadPipelines() {
@@ -252,10 +259,18 @@ public class MapsActivity extends FragmentActivity {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         String mapName = String.valueOf(documentSnapshot.get("map"));
+
                         mapTextView.setText(mapName);
                         MapsActivity.this.mapName = mapName;
                         loadPipelinesMap(mapName, MapsActivity.this, true, false, false);
                         progressBar.setVisibility(View.GONE);
+
+                        // spinner
+                        // chainage start and end should've been initialised by now
+                        ArrayList<String> choices = getChainageSpinnerChoices();
+                        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(MapsActivity.this, android.R.layout.simple_spinner_item, choices);
+                        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        chainageSpinner.setAdapter(spinnerAdapter);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -269,7 +284,7 @@ public class MapsActivity extends FragmentActivity {
     protected static void loadPipelinesMap(String mapName, Context context, boolean isMapsActivity, boolean isReportViewActivity, boolean isTripViewActivity) {
         LoadKml loadKml;
         switch (mapName) {
-            case "Bina IP1":
+            case BINA_IP1:
                 loadKml = new LoadKml(
                         context,
                         isMapsActivity,
@@ -278,8 +293,10 @@ public class MapsActivity extends FragmentActivity {
                         R.raw.bina_ip1,
                         Color.YELLOW
                 );
+                CHAINAGE_START = CHAINAGE_BINA_START;
+                CHAINAGE_END = CHAINAGE_BINA_END;
                 break;
-            case "JIPS":
+            case JIPS:
                 loadKml = new LoadKml(
                         context,
                         isMapsActivity,
@@ -288,8 +305,10 @@ public class MapsActivity extends FragmentActivity {
                         R.raw.jips,
                         Color.MAGENTA
                 );
+                CHAINAGE_START = CHAINAGE_JIPS_START;
+                CHAINAGE_END = CHAINAGE_JIPS_END;
                 break;
-            case "Kota IP1":
+            case KOTA_IP1:
                 loadKml = new LoadKml(
                         context,
                         isMapsActivity,
@@ -298,6 +317,8 @@ public class MapsActivity extends FragmentActivity {
                         R.raw.ip1_kota,
                         Color.GREEN
                 );
+                CHAINAGE_START = CHAINAGE_KOTA_IP1_START;
+                CHAINAGE_END = CHAINAGE_KOTA_IP1_END;
                 break;
             default:  // Kota-Malrana
                 loadKml = new LoadKml(
@@ -308,6 +329,8 @@ public class MapsActivity extends FragmentActivity {
                         R.raw.kota_malrana,
                         Color.RED
                 );
+                CHAINAGE_START = CHAINAGE_KOTA_MALRANA_START;
+                CHAINAGE_END = CHAINAGE_KOTA_MALRANA_END;
                 break;
         }
         loadKml.execute();
@@ -476,10 +499,11 @@ public class MapsActivity extends FragmentActivity {
     }
 
     private ArrayList<String> getChainageSpinnerChoices() {
+        // called after getting mapName
         ArrayList<String> choices = new ArrayList<>();
         choices.add(getResources().getString(R.string.enter_chainage_link));
 
-        for (int start = CHAINAGE_START; start < CHAINAGE_END - CHAINAGE_INTERVAL; start += CHAINAGE_INTERVAL) {
+        for (int start = CHAINAGE_START; start < CHAINAGE_END; start += CHAINAGE_INTERVAL) {
             choices.add(start + "-" + (start + CHAINAGE_INTERVAL) + " kms");
         }
 

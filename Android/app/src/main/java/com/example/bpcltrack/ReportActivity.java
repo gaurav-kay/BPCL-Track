@@ -257,6 +257,21 @@ public class ReportActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        if (photoFiles != null) {
+            for (int i = 0; i < photoFiles.size(); i++) {
+                if (!photoFiles.get(i).delete()) {
+                    Log.e(TAG, "onSuccess: IMAGE FILE NOT DELETED");
+                }
+            }
+        }
+
+        finish();
+    }
+
     private class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder> {
 
         private ArrayList<Bitmap> imageBitmaps;

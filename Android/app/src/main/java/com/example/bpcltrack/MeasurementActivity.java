@@ -255,6 +255,11 @@ public class MeasurementActivity extends AppCompatActivity {
     private void submitMeasurement() {
         // todo: add check to check if all fields are filled
 
+        if (!allFieldsEntered()) {
+            Toast.makeText(this, "Please fill all the fields and attach a picture", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         FirebaseAuth auth = FirebaseAuth.getInstance();
         StorageReference root = FirebaseStorage.getInstance().getReference();
 
@@ -314,6 +319,17 @@ public class MeasurementActivity extends AppCompatActivity {
                 Log.e(TAG, "onFailure: ", e);
             }
         });
+    }
+
+    private boolean allFieldsEntered() {
+        if (chainageEditText.getText().toString().equals("") ||
+                tlpNumberEditText.getText().toString().equals("") ||
+                tlpTypeSpinner.getSelectedItemPosition() == 0 ||
+                imageFile == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private void updateDBWithMeasurement(HashMap<String, Object> measurement) {
@@ -403,6 +419,13 @@ public class MeasurementActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        
+        if (imageFile != null) {
+            if (!imageFile.delete()) {
+                Log.e(TAG, "onBackPressed: IMAGE NOT DELETED");
+            }
+        }
+        
         finish();
     }
 }
