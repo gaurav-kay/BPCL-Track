@@ -258,8 +258,8 @@ public class ReportActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    public void onDestroy() {
+        super.onDestroy();
 
         if (photoFiles != null) {
             for (int i = 0; i < photoFiles.size(); i++) {

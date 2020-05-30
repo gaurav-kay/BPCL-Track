@@ -322,6 +322,8 @@ public class MeasurementActivity extends AppCompatActivity {
     }
 
     private boolean allFieldsEntered() {
+        Log.d(TAG, "allFieldsEntered: " + chainageEditText.getText().toString().equals("")
+                + tlpNumberEditText.getText().toString().equals("") + (tlpTypeSpinner.getSelectedItemPosition() == 0) + (imageFile == null));
         if (chainageEditText.getText().toString().equals("") ||
                 tlpNumberEditText.getText().toString().equals("") ||
                 tlpTypeSpinner.getSelectedItemPosition() == 0 ||
@@ -417,15 +419,15 @@ public class MeasurementActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        
+    protected void onDestroy() {
+        super.onDestroy();
+
         if (imageFile != null) {
             if (!imageFile.delete()) {
-                Log.e(TAG, "onBackPressed: IMAGE NOT DELETED");
+                Log.d(TAG, "onDestroy: IMAGE NOT DELETED");
             }
         }
-        
+
         finish();
     }
 }
